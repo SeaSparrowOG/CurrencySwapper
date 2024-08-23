@@ -1,6 +1,0 @@
-Package: clib-util
-Version: 1.4.1
-Port-Version: 1
-Architecture: x64-windows-static
-Multi-Arch: same
-Abi: ef5bab4b8b8f7aa9213d656d94404a90646c29a5df2c9d74a792e4b981221cdd

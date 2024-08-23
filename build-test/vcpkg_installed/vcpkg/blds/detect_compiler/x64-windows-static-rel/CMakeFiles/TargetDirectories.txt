@@ -1,0 +1,2 @@
+C:/Projects/CurrencySwapper/build-test/vcpkg_installed/vcpkg/blds/detect_compiler/x64-windows-static-rel/CMakeFiles/edit_cache.dir
+C:/Projects/CurrencySwapper/build-test/vcpkg_installed/vcpkg/blds/detect_compiler/x64-windows-static-rel/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,812 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "Release/CurrencySwapper.dll"
+		},
+		{
+			"path" : "Release/CurrencySwapper.lib"
+		},
+		{
+			"path" : "Release/CurrencySwapper.pdb"
+		}
+	],
+	"backtrace" : 2,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"_add_library",
+			"add_library",
+			"target_link_options",
+			"target_link_libraries",
+			"set_target_properties",
+			"include",
+			"_find_package",
+			"find_package",
+			"add_compile_options",
+			"target_compile_options",
+			"add_compile_definitions",
+			"target_compile_definitions",
+			"target_include_directories",
+			"target_precompile_headers",
+			"target_compile_features"
+		],
+		"files" : 
+		[
+			"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/vcpkg/scripts/buildsystems/vcpkg.cmake",
+			"CMakeLists.txt",
+			"C:/Projects/CommonLibSSE/CMakeLists.txt",
+			"build/vcpkg_installed/x64-windows-static/share/spdlog/spdlogConfigTargets.cmake",
+			"build/vcpkg_installed/x64-windows-static/share/spdlog/spdlogConfig.cmake",
+			"build/vcpkg_installed/x64-windows-static/share/jsoncpp/jsoncpp-namespaced-targets.cmake",
+			"build/vcpkg_installed/x64-windows-static/share/jsoncpp/jsoncppConfig.cmake"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 120,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 639,
+				"parent" : 1
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 179,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 1,
+				"line" : 149,
+				"parent" : 0
+			},
+			{
+				"file" : 2
+			},
+			{
+				"command" : 3,
+				"file" : 2,
+				"line" : 92,
+				"parent" : 5
+			},
+			{
+				"command" : 7,
+				"file" : 2,
+				"line" : 18,
+				"parent" : 5
+			},
+			{
+				"command" : 6,
+				"file" : 0,
+				"line" : 859,
+				"parent" : 7
+			},
+			{
+				"file" : 4,
+				"parent" : 8
+			},
+			{
+				"command" : 5,
+				"file" : 4,
+				"line" : 42,
+				"parent" : 9
+			},
+			{
+				"file" : 3,
+				"parent" : 10
+			},
+			{
+				"command" : 4,
+				"file" : 3,
+				"line" : 60,
+				"parent" : 11
+			},
+			{
+				"command" : 7,
+				"file" : 1,
+				"line" : 98,
+				"parent" : 0
+			},
+			{
+				"command" : 6,
+				"file" : 0,
+				"line" : 859,
+				"parent" : 13
+			},
+			{
+				"file" : 6,
+				"parent" : 14
+			},
+			{
+				"command" : 5,
+				"file" : 6,
+				"line" : 31,
+				"parent" : 15
+			},
+			{
+				"file" : 5,
+				"parent" : 16
+			},
+			{
+				"command" : 4,
+				"file" : 5,
+				"line" : 3,
+				"parent" : 17
+			},
+			{
+				"command" : 8,
+				"file" : 1,
+				"line" : 76,
+				"parent" : 0
+			},
+			{
+				"command" : 9,
+				"file" : 1,
+				"line" : 163,
+				"parent" : 0
+			},
+			{
+				"command" : 10,
+				"file" : 1,
+				"line" : 38,
+				"parent" : 0
+			},
+			{
+				"command" : 10,
+				"file" : 1,
+				"line" : 39,
+				"parent" : 0
+			},
+			{
+				"command" : 11,
+				"file" : 1,
+				"line" : 135,
+				"parent" : 0
+			},
+			{
+				"command" : 12,
+				"file" : 1,
+				"line" : 141,
+				"parent" : 0
+			},
+			{
+				"command" : 13,
+				"file" : 1,
+				"line" : 156,
+				"parent" : 0
+			},
+			{
+				"command" : 14,
+				"file" : 1,
+				"line" : 129,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "/EHsc /MP /W4 /external:anglebrackets /external:W0 /O2 /Ob2 /DNDEBUG -std:c++latest -MT /GL"
+				},
+				{
+					"backtrace" : 19,
+					"fragment" : "/MP"
+				},
+				{
+					"backtrace" : 20,
+					"fragment" : "/sdl"
+				},
+				{
+					"backtrace" : 20,
+					"fragment" : "/utf-8"
+				},
+				{
+					"backtrace" : 20,
+					"fragment" : "/Zi"
+				},
+				{
+					"backtrace" : 20,
+					"fragment" : "/permissive-"
+				},
+				{
+					"backtrace" : 20,
+					"fragment" : "/Zc:preprocessor"
+				},
+				{
+					"backtrace" : 20,
+					"fragment" : "/wd4200"
+				},
+				{
+					"backtrace" : 20,
+					"fragment" : "/Zc:inline"
+				},
+				{
+					"backtrace" : 20,
+					"fragment" : "/JMC-"
+				},
+				{
+					"backtrace" : 20,
+					"fragment" : "/Ob3"
+				},
+				{
+					"fragment" : "/YcC:/Projects/CurrencySwapper/build/CMakeFiles/CurrencySwapper.dir/Release/cmake_pch.hxx /FpC:/Projects/CurrencySwapper/build/CurrencySwapper.dir/Release/cmake_pch.pch /FIC:/Projects/CurrencySwapper/build/CMakeFiles/CurrencySwapper.dir/Release/cmake_pch.hxx"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"define" : "CurrencySwapper_EXPORTS"
+				},
+				{
+					"backtrace" : 21,
+					"define" : "SKYRIM_AE"
+				},
+				{
+					"backtrace" : 22,
+					"define" : "SKYRIM_SUPPORT_AE"
+				},
+				{
+					"backtrace" : 4,
+					"define" : "SPDLOG_COMPILED_LIB"
+				},
+				{
+					"backtrace" : 4,
+					"define" : "SPDLOG_FMT_EXTERNAL"
+				},
+				{
+					"backtrace" : 4,
+					"define" : "WINVER=0x0601"
+				},
+				{
+					"backtrace" : 23,
+					"define" : "_UNICODE"
+				},
+				{
+					"backtrace" : 4,
+					"define" : "_WIN32_WINNT=0x0601"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 24,
+					"path" : "C:/Projects/CurrencySwapper/build/include"
+				},
+				{
+					"backtrace" : 24,
+					"path" : "C:/Projects/CurrencySwapper/src"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "C:/Projects/CommonLibSSE/include"
+				},
+				{
+					"backtrace" : 24,
+					"isSystem" : true,
+					"path" : "C:/Projects/CurrencySwapper/build/vcpkg_installed/x64-windows-static/include"
+				}
+			],
+			"language" : "CXX",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					26,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4
+				],
+				"standard" : "23"
+			},
+			"precompileHeaders" : 
+			[
+				{
+					"backtrace" : 25,
+					"header" : "C:/Projects/CurrencySwapper/src/PCH.h"
+				}
+			],
+			"sourceIndexes" : 
+			[
+				0
+			]
+		},
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "/EHsc /MP /W4 /external:anglebrackets /external:W0 /O2 /Ob2 /DNDEBUG -std:c++latest -MT /GL"
+				},
+				{
+					"backtrace" : 19,
+					"fragment" : "/MP"
+				},
+				{
+					"backtrace" : 20,
+					"fragment" : "/sdl"
+				},
+				{
+					"backtrace" : 20,
+					"fragment" : "/utf-8"
+				},
+				{
+					"backtrace" : 20,
+					"fragment" : "/Zi"
+				},
+				{
+					"backtrace" : 20,
+					"fragment" : "/permissive-"
+				},
+				{
+					"backtrace" : 20,
+					"fragment" : "/Zc:preprocessor"
+				},
+				{
+					"backtrace" : 20,
+					"fragment" : "/wd4200"
+				},
+				{
+					"backtrace" : 20,
+					"fragment" : "/Zc:inline"
+				},
+				{
+					"backtrace" : 20,
+					"fragment" : "/JMC-"
+				},
+				{
+					"backtrace" : 20,
+					"fragment" : "/Ob3"
+				},
+				{
+					"fragment" : "/YuC:/Projects/CurrencySwapper/build/CMakeFiles/CurrencySwapper.dir/Release/cmake_pch.hxx /FpC:/Projects/CurrencySwapper/build/CurrencySwapper.dir/Release/cmake_pch.pch /FIC:/Projects/CurrencySwapper/build/CMakeFiles/CurrencySwapper.dir/Release/cmake_pch.hxx"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"define" : "CurrencySwapper_EXPORTS"
+				},
+				{
+					"backtrace" : 21,
+					"define" : "SKYRIM_AE"
+				},
+				{
+					"backtrace" : 22,
+					"define" : "SKYRIM_SUPPORT_AE"
+				},
+				{
+					"backtrace" : 4,
+					"define" : "SPDLOG_COMPILED_LIB"
+				},
+				{
+					"backtrace" : 4,
+					"define" : "SPDLOG_FMT_EXTERNAL"
+				},
+				{
+					"backtrace" : 4,
+					"define" : "WINVER=0x0601"
+				},
+				{
+					"backtrace" : 23,
+					"define" : "_UNICODE"
+				},
+				{
+					"backtrace" : 4,
+					"define" : "_WIN32_WINNT=0x0601"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 24,
+					"path" : "C:/Projects/CurrencySwapper/build/include"
+				},
+				{
+					"backtrace" : 24,
+					"path" : "C:/Projects/CurrencySwapper/src"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "C:/Projects/CommonLibSSE/include"
+				},
+				{
+					"backtrace" : 24,
+					"isSystem" : true,
+					"path" : "C:/Projects/CurrencySwapper/build/vcpkg_installed/x64-windows-static/include"
+				}
+			],
+			"language" : "CXX",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					26,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4,
+					4
+				],
+				"standard" : "23"
+			},
+			"precompileHeaders" : 
+			[
+				{
+					"backtrace" : 25,
+					"header" : "C:/Projects/CurrencySwapper/src/PCH.h"
+				}
+			],
+			"sourceIndexes" : 
+			[
+				5,
+				6,
+				7,
+				8
+			]
+		},
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-DWIN32"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"define" : "CurrencySwapper_EXPORTS"
+				},
+				{
+					"backtrace" : 21,
+					"define" : "SKYRIM_AE"
+				},
+				{
+					"backtrace" : 22,
+					"define" : "SKYRIM_SUPPORT_AE"
+				},
+				{
+					"backtrace" : 4,
+					"define" : "SPDLOG_COMPILED_LIB"
+				},
+				{
+					"backtrace" : 4,
+					"define" : "SPDLOG_FMT_EXTERNAL"
+				},
+				{
+					"backtrace" : 4,
+					"define" : "WINVER=0x0601"
+				},
+				{
+					"backtrace" : 23,
+					"define" : "_UNICODE"
+				},
+				{
+					"backtrace" : 4,
+					"define" : "_WIN32_WINNT=0x0601"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 24,
+					"path" : "C:/Projects/CurrencySwapper/build/include"
+				},
+				{
+					"backtrace" : 24,
+					"path" : "C:/Projects/CurrencySwapper/src"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "C:/Projects/CommonLibSSE/include"
+				},
+				{
+					"backtrace" : 24,
+					"isSystem" : true,
+					"path" : "C:/Projects/CurrencySwapper/build/vcpkg_installed/x64-windows-static/include"
+				}
+			],
+			"language" : "RC",
+			"precompileHeaders" : 
+			[
+				{
+					"backtrace" : 25,
+					"header" : "C:/Projects/CurrencySwapper/src/PCH.h"
+				}
+			],
+			"sourceIndexes" : 
+			[
+				10
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 4,
+			"id" : "CommonLibSSE::@d061bd76b316fed614c9"
+		},
+		{
+			"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df"
+		}
+	],
+	"id" : "CurrencySwapper::@6890427a1f51a3e7e1df",
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "/machine:x64 /INCREMENTAL:NO",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "/INCREMENTAL:NO",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "/OPT:REF",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "/OPT:ICF",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "/DEBUG:FULL",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "/INCREMENTAL:NO /LTCG",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 4,
+				"fragment" : "CommonLibSSE\\Release\\CommonLibSSE.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 6,
+				"fragment" : "vcpkg_installed\\x64-windows-static\\lib\\binary_io.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 6,
+				"fragment" : "vcpkg_installed\\x64-windows-static\\lib\\spdlog.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 12,
+				"fragment" : "vcpkg_installed\\x64-windows-static\\lib\\fmt.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 6,
+				"fragment" : "Advapi32.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 6,
+				"fragment" : "D3D11.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 6,
+				"fragment" : "d3dcompiler.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 6,
+				"fragment" : "Dbghelp.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 6,
+				"fragment" : "DXGI.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 6,
+				"fragment" : "Ole32.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 6,
+				"fragment" : "Version.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 18,
+				"fragment" : "vcpkg_installed\\x64-windows-static\\lib\\jsoncpp.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX",
+		"lto" : true
+	},
+	"name" : "CurrencySwapper",
+	"nameOnDisk" : "CurrencySwapper.dll",
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0,
+				10
+			]
+		},
+		{
+			"name" : "src",
+			"sourceIndexes" : 
+			[
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8
+			]
+		},
+		{
+			"name" : "include",
+			"sourceIndexes" : 
+			[
+				9
+			]
+		},
+		{
+			"name" : "Precompile Header File",
+			"sourceIndexes" : 
+			[
+				11,
+				12
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 0,
+			"compileGroupIndex" : 0,
+			"path" : "build/CMakeFiles/CurrencySwapper.dir/cmake_pch.cxx",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 2,
+			"path" : "src/PCH.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 2,
+			"path" : "src/hooks.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 2,
+			"path" : "src/papyrus.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 2,
+			"path" : "src/serde.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 2,
+			"compileGroupIndex" : 1,
+			"path" : "src/hooks.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 2,
+			"compileGroupIndex" : 1,
+			"path" : "src/main.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 2,
+			"compileGroupIndex" : 1,
+			"path" : "src/papyrus.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 2,
+			"compileGroupIndex" : 1,
+			"path" : "src/serde.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 2,
+			"path" : "build/include/Version.h",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 2,
+			"compileGroupIndex" : 2,
+			"path" : "build/version.rc",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 0,
+			"path" : "build/CMakeFiles/CurrencySwapper.dir/Debug/cmake_pch.hxx",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 0,
+			"path" : "build/CMakeFiles/CurrencySwapper.dir/Release/cmake_pch.hxx",
+			"sourceGroupIndex" : 3
+		}
+	],
+	"type" : "SHARED_LIBRARY"
+}

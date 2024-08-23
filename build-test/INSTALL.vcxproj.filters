@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Projects\CurrencySwapper\build-test\CMakeFiles\137fb98ae1edeab212deac8ff47593fe\INSTALL_force.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{6E98CE2F-32B3-395A-BB27-5F1C7E129D9B}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

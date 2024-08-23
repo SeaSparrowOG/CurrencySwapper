@@ -1,0 +1,8 @@
+Package: rsm-binary-io
+Version: 2.0.5
+Depends: vcpkg-cmake:x64-windows, vcpkg-cmake-config:x64-windows
+Architecture: x64-windows-static
+Multi-Arch: same
+Abi: 0a797d64468291382af96125e098d158faab9400e289db2a69fa175f4cd7a71e
+Description: A binary i/o library for C++, without the agonizing pain
+Status: install ok installed

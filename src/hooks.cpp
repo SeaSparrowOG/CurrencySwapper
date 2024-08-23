@@ -42,7 +42,10 @@ namespace Hooks {
 
 	RE::TESForm* BarterHooks::GetCurrency()
 	{
-		return this->currency->As<RE::TESForm>();
+		if (this->currency) {
+			return this->currency->As<RE::TESForm>();
+		}
+		return nullptr;
 	}
 
 	//Hook code

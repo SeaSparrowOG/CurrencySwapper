@@ -95,6 +95,7 @@ else ()
 endif()
 
 find_path(CLIB_UTIL_INCLUDE_DIRS "ClibUtil/utils.hpp")
+find_package(jsoncpp CONFIG REQUIRED)
 
 # ---- Add source files ----
 include(cmake/headerlist.cmake)
@@ -149,6 +150,7 @@ target_link_libraries(
 	${PROJECT_NAME}
 	PRIVATE
 		${CommonLibName}::${CommonLibName}
+		JsonCpp::JsonCpp
 )
 
 target_precompile_headers(

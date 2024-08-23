@@ -1,6 +1,11 @@
-## Enchantment Art Extender
-This is a framework that allows for more interesting visuals for enchanted weapons in TESV: Skyrim Special Edition. It achieves this by silently adding specific spells with hit arts. Each of these "swaps" is defined in a configuration file.
+## Currency Swapper
+SKSE Framework for dynamically swapping the currency vendors trade in. Very useful for mods such as C.O.I.N. that add multiple currencies.
 
+## Usage
+### Papyrus
+Currently, the framework relies on Papyrus to swap the trading currency. In order to swap anything, you need to import SEA_BarterFunctions and then simply use the SetCurrency function, passing in the form you want to use as currency. I recommend storing the previous currency somewhere in your script (retrieve it using GetCurrency()) in order to not overwrite changes other authors might make.
+In the future you will be able to introduce keywords and formlists for bartering, but that comes much later.
+_
 ## Building
 ### Requirements:
 - CMake
@@ -9,8 +14,8 @@ This is a framework that allows for more interesting visuals for enchanted weapo
 ---
 ### Instructions:
 ```
-git clone https://github.com/SeaSparrowOG/EnchantmentArtExtender
-cd EnchantmentArtExtender
+git clone https://github.com/SeaSparrowOG/CurrencySwapper
+cd CurrencySwapper
 git submodule innit
 git submodule update --recursive
 cmake --preset vs2022-windows-vcpkg 

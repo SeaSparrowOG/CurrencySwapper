@@ -1,7 +1,0 @@
-C:/Projects/CurrencySwapper/build-test/CMakeFiles/CurrencySwapper.dir
-C:/Projects/CurrencySwapper/build-test/CMakeFiles/INSTALL.dir
-C:/Projects/CurrencySwapper/build-test/CMakeFiles/ALL_BUILD.dir
-C:/Projects/CurrencySwapper/build-test/CMakeFiles/ZERO_CHECK.dir
-C:/Projects/CurrencySwapper/build-test/CommonLibSSE/CMakeFiles/CommonLibSSE.dir
-C:/Projects/CurrencySwapper/build-test/CommonLibSSE/CMakeFiles/INSTALL.dir
-C:/Projects/CurrencySwapper/build-test/CommonLibSSE/CMakeFiles/ALL_BUILD.dir

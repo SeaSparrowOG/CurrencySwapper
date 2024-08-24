@@ -3,7 +3,7 @@
 namespace Hooks {
 	bool BarterHooks::Install()
 	{
-		SKSE::AllocTrampoline(70); // 5 * 14
+		SKSE::AllocTrampoline(56); // 4 * 14
 		auto& trampoline = SKSE::GetTrampoline();
 
 		//1.6.1170 -> 1408ec1d9 (Actor::GetGoldAmount)
@@ -22,6 +22,11 @@ namespace Hooks {
 		REL::Relocation<std::uintptr_t> purchaseGoldTarget{ REL::ID(50951), 0x121 };
 		_getGoldFromPurchase = trampoline.write_call<5>(purchaseGoldTarget.address(), &GetGoldFromPurchase);
 
+		auto* eventHolder = RE::UI::GetSingleton();
+		if (!eventHolder)
+			return false;
+
+		eventHolder->AddEventSink(this);
 		return true;
 	}
 
@@ -46,6 +51,34 @@ namespace Hooks {
 			return this->currency->As<RE::TESForm>();
 		}
 		return nullptr;
+	}
+
+	RE::BSEventNotifyControl BarterHooks::ProcessEvent(const RE::MenuOpenCloseEvent* a_event, RE::BSTEventSource<RE::MenuOpenCloseEvent>*)
+	{
+#define continueEvent RE::BSEventNotifyControl::kContinue
+		if (!currency) return continueEvent;
+		if (!a_event || !a_event->opening) return continueEvent;
+		if (a_event->menuName != RE::BarterMenu::MENU_NAME) return continueEvent;
+		
+		std::string currencyName = currency->GetName(); 
+
+		auto* menu = RE::UI::GetSingleton()->GetMovieView(RE::BarterMenu::MENU_NAME).get();
+		if (!menu) return continueEvent;
+
+		_loggerDebug("Event started");
+		RE::GFxValue var;
+		menu->GetVariable(&var, "_root.Menu_mc.BottomBar_mc.PlayerInfoCard_mc.PlayerGoldLabel");
+		if (var.IsUndefined()) return continueEvent;
+
+		var.SetText(currencyName.c_str());
+
+		menu->GetVariable(&var, "_root.Menu_mc.BottomBar_mc.PlayerInfoCard_mc.VendorGoldLabel");
+		if (var.IsUndefined()) return continueEvent;
+
+		currencyName = "Vendor " + currencyName;
+		var.SetText(currencyName.c_str());
+		return continueEvent;
+#undef continueEvent
 	}
 
 	//Hook code

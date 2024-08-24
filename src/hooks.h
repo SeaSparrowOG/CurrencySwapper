@@ -1,7 +1,8 @@
 #pragma once
 
 namespace Hooks {
-	class BarterHooks : public ISingleton<BarterHooks> {
+	class BarterHooks : public ISingleton<BarterHooks>,
+		public RE::BSTEventSink<RE::MenuOpenCloseEvent> {
 	public:
 		bool Install();
 
@@ -9,6 +10,10 @@ namespace Hooks {
 		bool         SetCurrency(RE::TESForm* a_newCurrency);
 		RE::TESForm* GetCurrency();
 	private:
+		RE::BSEventNotifyControl ProcessEvent(
+			const RE::MenuOpenCloseEvent* a_event,
+			RE::BSTEventSource<RE::MenuOpenCloseEvent>*) override;
+
 		// Returns the player's total CURRENCY, based on what the actual currency currently is.
 		static int          GetPlayerGold(RE::Actor* a_player);
 		// Returns the vendor's total CURRENCY, again based on the actual currency.

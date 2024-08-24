@@ -85,25 +85,25 @@ namespace Hooks {
 	void BarterHooks::GetGoldFromPurchase(RE::InventoryChanges* a_inventoryChanges, RE::Actor* a_buyer, int a_value, RE::ItemList* param_4)
 	{
 		if (currency) {
-			RemoveCurrency(currency->As<RE::TESForm>(), a_value, false, true, "");
-			MoveCurrency(a_inventoryChanges, new uint32_t, a_buyer, currency->As<RE::TESForm>(), a_value, 4, 0, param_4, 0, 0);
+			GoldRemovedMessage(currency->As<RE::TESForm>(), a_value, false, true, "");
+			MoveGoldBetweenContainers(a_inventoryChanges, new uint32_t, a_buyer, currency->As<RE::TESForm>(), a_value, 4, 0, param_4, 0, 0);
 		}
 		else {
 			return _getGoldFromPurchase(a_inventoryChanges, a_buyer, a_value, param_4);
 		}
 	}
 
-	void BarterHooks::RemoveCurrency(RE::TESForm* a_formToRemove, int a_ammount, bool arg3, bool arg4, const char* arg5)
+	void BarterHooks::GoldRemovedMessage(RE::TESForm* a_formToRemove, int a_ammount, bool arg3, bool arg4, const char* arg5)
 	{
-		using func_t = decltype(&BarterHooks::RemoveCurrency);
+		using func_t = decltype(&BarterHooks::GoldRemovedMessage);
 		static REL::Relocation<func_t> func{ REL::ID(51636) };
 		return func(a_formToRemove, a_ammount, arg3, arg4, arg5);
 	}
 
-	uint32_t* BarterHooks::MoveCurrency(RE::InventoryChanges* a_inventoryChanges, uint32_t* param_2, RE::Actor* a_actor, RE::TESForm* a_form,
+	uint32_t* BarterHooks::MoveGoldBetweenContainers(RE::InventoryChanges* a_inventoryChanges, uint32_t* param_2, RE::Actor* a_actor, RE::TESForm* a_form,
 								   uint64_t a_concatResult, int arg6, long long** arg7, RE::ItemList* arg8, long long** arg9, long long **arg10)
 	{
-		using func_t = decltype(&BarterHooks::MoveCurrency);
+		using func_t = decltype(&BarterHooks::MoveGoldBetweenContainers);
 		static REL::Relocation<func_t> func{ REL::ID(16059) };
 		return func(a_inventoryChanges, param_2, a_actor, a_form, a_concatResult, arg6, arg7, arg8, arg9, arg10);
 	}

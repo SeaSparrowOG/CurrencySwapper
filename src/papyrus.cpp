@@ -32,8 +32,8 @@ namespace Papyrus {
 
 	bool Bind(VM& a_vm)
 	{
+		BIND(ResetCurrency);
 		BIND(SetCurrencyConsole);
-		BIND(SetCurrency);
 		BIND(SetCurrency);
 		BIND(GetCurrency);
 		BIND(RegisterFormForAllEvents);

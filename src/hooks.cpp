@@ -110,14 +110,24 @@ namespace Hooks {
 		auto* menu = RE::UI::GetSingleton()->GetMovieView(RE::BarterMenu::MENU_NAME).get();
 		if (!menu) return continueEvent;
 
+		std::string pathToPlayerLabel = "_root.Menu_mc.BottomBar_mc.PlayerInfoCard_mc.PlayerGoldLabel";
+		std::string pathToVendorLabel = "_root.Menu_mc.BottomBar_mc.PlayerInfoCard_mc.VendorGoldLabel";
+		if (RE::TESDataHandler::GetSingleton()->LookupLoadedModByName("SkyUI_SE.esp")) {
+			pathToPlayerLabel = "_root.Menu_mc.bottomBar.playerInfoCard.PlayerGoldLabel";
+			pathToVendorLabel = "_root.Menu_mc.bottomBar.playerInfoCard.VendorGoldLabel";
+		}
+
 		RE::GFxValue var;
-		menu->GetVariable(&var, "_root.Menu_mc.BottomBar_mc.PlayerInfoCard_mc.PlayerGoldLabel");
-		if (var.IsUndefined()) return continueEvent;
+		menu->GetVariable(&var, pathToPlayerLabel.c_str());
+		if (var.IsUndefined()) {
+			return continueEvent;
+		}
 
 		var.SetText(currencyName.c_str());
-
-		menu->GetVariable(&var, "_root.Menu_mc.BottomBar_mc.PlayerInfoCard_mc.VendorGoldLabel");
-		if (var.IsUndefined()) return continueEvent;
+		menu->GetVariable(&var, pathToVendorLabel.c_str());
+		if (var.IsUndefined()) {
+			return continueEvent;
+		}
 
 		currencyName = "Vendor " + currencyName;
 		var.SetText(currencyName.c_str());

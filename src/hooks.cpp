@@ -3,7 +3,7 @@
 namespace Hooks {
 	bool BarterHooks::Install()
 	{
-		SKSE::AllocTrampoline(84); // 6 * 14
+		SKSE::AllocTrampoline(98); // 7 * 14
 		auto& trampoline = SKSE::GetTrampoline();
 
 		//1.6.1170 -> 1408ec1d9 (Actor::GetGoldAmount)
@@ -29,6 +29,10 @@ namespace Hooks {
 		//1.6.1170 -> 1408eb8e7 (ShowHUDMessage)
 		REL::Relocation<std::uintptr_t> rejectedDealTarget{ REL::ID(50951), 0x1A7 };
 		_processRejectedDeal = trampoline.write_call<5>(rejectedDealTarget.address(), &ProcessRejectedDeal);
+
+		//1.6.1170 -> 1408ec467
+		REL::Relocation<std::uintptr_t> resetVendorInformationTarget{ REL::ID(50957), 0x2F7 };
+		_recalcVendorGold = trampoline.write_call<5>(resetVendorInformationTarget.address(), &RecalcVendorGold);
 
 		auto* sGold = RE::GameSettingCollection::GetSingleton()->GetSetting("sGold");
 		if (!sGold) return false;
@@ -205,6 +209,22 @@ namespace Hooks {
 
 		if (currency) {
 			customPurchaseFail.QueueEvent(currency);
+		}
+	}
+
+	void BarterHooks::RecalcVendorGold(void* param_1, const char* a_function, void* param_2)
+	{
+		_recalcVendorGold(param_1, a_function, param_2);
+
+		if (currency) {
+			auto* menu = RE::UI::GetSingleton()->GetMovieView(RE::BarterMenu::MENU_NAME).get();
+			if (!menu) return;
+
+			RE::GFxValue var;
+			menu->GetVariable(&var, "_root.Menu_mc.BottomBar_mc.PlayerInfoCard_mc.VendorGoldLabel");
+			if (var.IsUndefined()) return;
+			defaultVendorInformation = "Vendor " + std::string(currency->GetName());
+			var.SetText(defaultVendorInformation.c_str());
 		}
 	}
 }

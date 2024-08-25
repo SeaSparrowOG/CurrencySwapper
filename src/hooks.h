@@ -37,6 +37,7 @@ namespace Hooks {
 		static void         ProcessRawDeal(uint64_t* param_1, const char* a_message, uint64_t a_concatResult, uint64_t param_4);
 		// "Rejected Deals" are deals where the player has less currency than the value of the thing being sold.
 		static void         ProcessRejectedDeal(const char* a_message, const char* a_functionName, uint64_t a_value);
+		static void         RecalcVendorGold(void* param_1, const char* a_function, void* param_2);
 
 		// Original function calls.
 		inline static REL::Relocation<decltype(&ProcessRejectedDeal)> _processRejectedDeal;
@@ -45,12 +46,14 @@ namespace Hooks {
 		inline static REL::Relocation<decltype(&GetVendorGold)>       _getVendorGold;
 		inline static REL::Relocation<decltype(&GetGoldFromSale)>     _getGoldFromSale;
 		inline static REL::Relocation<decltype(&GetGoldFromPurchase)> _getGoldFromPurchase;
+		inline static REL::Relocation<decltype(&RecalcVendorGold)>    _recalcVendorGold;
 
 		// Current currency. If nullptr, gold is used. Otherwise it is whatever form is specified.
 		inline static RE::TESBoundObject* currency{ nullptr };
 		inline static std::string defaultMessage{ "" };
 		inline static std::string defaultNotEnoughGoldMessage{ "" };
 		inline static std::string defaultReplacement{ "" };
+		inline static std::string defaultVendorInformation{ "" };
 
 		//The following are game functions. I call them from the GetGoldFromPurchase function.
 		static void         GoldRemovedMessage(RE::TESForm* a_formToRemove, int a_ammount,

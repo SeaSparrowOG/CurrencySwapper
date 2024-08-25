@@ -23,8 +23,11 @@ namespace Hooks {
 			                     RE::Actor* a_buyer, int a_value, RE::ItemList* unknown);
 		// Function that moves gold from the merchant's inventory to the player's when a sale is complete.
 		static RE::TESForm* GetGoldFromSale(int a_formID);
+		// "Raw Deals" are deals where the vendor has less currency than the value of the thing being sold.
+		static void         ProcessRawDeal(uint64_t* param_1, const char* a_message, uint64_t a_concatResult, uint64_t param_4);
 
 		// Original function calls.
+		inline static REL::Relocation<decltype(&ProcessRawDeal)>      _processRawDeal;
 		inline static REL::Relocation<decltype(&GetPlayerGold)>       _getPlayerGold;
 		inline static REL::Relocation<decltype(&GetVendorGold)>       _getVendorGold;
 		inline static REL::Relocation<decltype(&GetGoldFromSale)>     _getGoldFromSale;
@@ -32,6 +35,8 @@ namespace Hooks {
 
 		// Current currency. If nullptr, gold is used. Otherwise it is whatever form is specified.
 		inline static RE::TESBoundObject* currency{ nullptr };
+		inline static std::string defaultMessage{ "" };
+		inline static std::string defaultReplacement{ "" };
 
 		//The following are game functions. I call them from the GetGoldFromPurchase function.
 		static void         GoldRemovedMessage(RE::TESForm* a_formToRemove, int a_ammount,

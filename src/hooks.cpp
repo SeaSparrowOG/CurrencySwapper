@@ -3,7 +3,7 @@
 namespace Hooks {
 	bool BarterHooks::Install()
 	{
-		SKSE::AllocTrampoline(56); // 4 * 14
+		SKSE::AllocTrampoline(70); // 5 * 14
 		auto& trampoline = SKSE::GetTrampoline();
 
 		//1.6.1170 -> 1408ec1d9 (Actor::GetGoldAmount)
@@ -21,6 +21,14 @@ namespace Hooks {
 		//1.6.1170 -> 1408eb861
 		REL::Relocation<std::uintptr_t> purchaseGoldTarget{ REL::ID(50951), 0x121 };
 		_getGoldFromPurchase = trampoline.write_call<5>(purchaseGoldTarget.address(), &GetGoldFromPurchase);
+
+		//1.6.1170 -> 1408ebb51
+		REL::Relocation<std::uintptr_t> rawDealTarget{ REL::ID(50952), 0xB1 };
+		_processRawDeal = trampoline.write_call<5>(rawDealTarget.address(), &ProcessRawDeal);
+
+		auto* sGold = RE::GameSettingCollection::GetSingleton()->GetSetting("sGold");
+		if (!sGold) return false;
+		defaultReplacement = sGold->GetString();
 
 		auto* eventHolder = RE::UI::GetSingleton();
 		if (!eventHolder)
@@ -65,7 +73,6 @@ namespace Hooks {
 		auto* menu = RE::UI::GetSingleton()->GetMovieView(RE::BarterMenu::MENU_NAME).get();
 		if (!menu) return continueEvent;
 
-		_loggerDebug("Event started");
 		RE::GFxValue var;
 		menu->GetVariable(&var, "_root.Menu_mc.BottomBar_mc.PlayerInfoCard_mc.PlayerGoldLabel");
 		if (var.IsUndefined()) return continueEvent;
@@ -139,5 +146,15 @@ namespace Hooks {
 		using func_t = decltype(&BarterHooks::MoveGoldBetweenContainers);
 		static REL::Relocation<func_t> func{ REL::ID(16059) };
 		return func(a_inventoryChanges, param_2, a_actor, a_form, a_concatResult, arg6, arg7, arg8, arg9, arg10);
+	}
+
+	void BarterHooks::ProcessRawDeal(uint64_t* param_1, const char* a_message, uint64_t a_itemValue, uint64_t a_merchantGold) {
+		if (currency) {
+			std::string currencyName = currency->GetName();
+			defaultMessage = a_message;
+			clib_util::string::replace_all(defaultMessage, defaultReplacement, currencyName);
+			a_message = defaultMessage.c_str();
+		}
+		return _processRawDeal(param_1, a_message, a_itemValue, a_merchantGold);
 	}
 }

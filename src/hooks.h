@@ -8,7 +8,17 @@ namespace Hooks {
 
 		void         RevertCurrency();
 		bool         SetCurrency(RE::TESForm* a_newCurrency);
+		void         RegisterFormForAllEvents(RE::TESForm* a_form);
+		void         UnRegisterFormForAllEvents(RE::TESForm* a_form);
 		RE::TESForm* GetCurrency();
+
+		//Papyrus registration set.
+		static inline SKSE::RegistrationSet<RE::TESForm*> customRevert{ "OnCurrencyRevert"sv };
+		static inline SKSE::RegistrationSet<RE::TESForm*> customPurchase{ "OnCustomPurchase"sv };
+		static inline SKSE::RegistrationSet<RE::TESForm*> customSale{ "OnCustomSale"sv };
+		static inline SKSE::RegistrationSet<RE::TESForm*> customPurchaseFail{ "OnCustomCurrencyFail"sv };
+		static inline SKSE::RegistrationSet<RE::TESForm*, RE::TESForm*> currencySwap{ "OnCurrencySwap"sv };
+
 	private:
 		RE::BSEventNotifyControl ProcessEvent(
 			const RE::MenuOpenCloseEvent* a_event,
@@ -48,5 +58,6 @@ namespace Hooks {
 		static uint32_t*    MoveGoldBetweenContainers(RE::InventoryChanges* a_inventoryChanges, uint32_t* param_2, 
 			RE::Actor* a_actor, RE::TESForm* a_form, uint64_t a_concatResult, int arg6, long long** arg7, 
 			RE::ItemList* arg8, long long** arg9, long long** arg10);
+
 	};
 }

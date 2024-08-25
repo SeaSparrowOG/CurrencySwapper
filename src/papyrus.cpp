@@ -4,6 +4,10 @@
 
 namespace Papyrus {
 
+	void ResetCurrency(STATIC_ARGS) {
+		Hooks::BarterHooks::GetSingleton()->RevertCurrency();
+	}
+
 	bool SetCurrency(STATIC_ARGS, RE::TESForm* a_newCurrency) {
 		return Hooks::BarterHooks::GetSingleton()->SetCurrency(a_newCurrency);
 	}
@@ -21,11 +25,18 @@ namespace Papyrus {
 		return Hooks::BarterHooks::GetSingleton()->GetCurrency();
 	}
 
+	void RegisterFormForAllEvents(STATIC_ARGS, RE::TESForm* a_form) {
+		if (!a_form) return;
+		Hooks::BarterHooks::GetSingleton()->RegisterFormForAllEvents(a_form);
+	}
+
 	bool Bind(VM& a_vm)
 	{
 		BIND(SetCurrencyConsole);
 		BIND(SetCurrency);
+		BIND(SetCurrency);
 		BIND(GetCurrency);
+		BIND(RegisterFormForAllEvents);
 		return true;
 	}
 

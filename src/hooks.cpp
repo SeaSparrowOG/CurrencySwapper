@@ -44,7 +44,11 @@ namespace Hooks {
 
 	void BarterHooks::RevertCurrency()
 	{
+		RE::TESForm* oldCurrency = nullptr;
+		if (currency) oldCurrency = currency;
+
 		currency = nullptr;
+		customRevert.QueueEvent(oldCurrency);
 	}
 
 	bool BarterHooks::SetCurrency(RE::TESForm* a_newCurrency)
@@ -53,8 +57,33 @@ namespace Hooks {
 		auto* newCurrency = static_cast<RE::TESBoundObject*>(a_newCurrency);
 		if (!newCurrency) return false;
 
+		auto* oldCurrency = currency;
 		this->currency = newCurrency;
+
+		currencySwap.QueueEvent(oldCurrency, currency);
 		return true;
+	}
+
+	void BarterHooks::RegisterFormForAllEvents(RE::TESForm* a_form)
+	{
+		if (!a_form) return;
+
+		customRevert.Register(a_form);
+		customPurchase.Register(a_form);
+		customSale.Register(a_form);
+		customPurchaseFail.Register(a_form);
+		currencySwap.Register(a_form);
+	}
+
+	void BarterHooks::UnRegisterFormForAllEvents(RE::TESForm* a_form)
+	{
+		if (!a_form) return;
+
+		customRevert.Unregister(a_form);
+		customPurchase.Unregister(a_form);
+		customSale.Unregister(a_form);
+		customPurchaseFail.Unregister(a_form);
+		currencySwap.Unregister(a_form);
 	}
 
 	RE::TESForm* BarterHooks::GetCurrency()
@@ -121,6 +150,7 @@ namespace Hooks {
 	RE::TESForm* BarterHooks::GetGoldFromSale(int a_formID)
 	{
 		if (currency) {
+			customSale.QueueEvent(currency);
 			return currency;
 		}
 		return _getGoldFromSale(a_formID);
@@ -131,6 +161,7 @@ namespace Hooks {
 		if (currency) {
 			GoldRemovedMessage(currency->As<RE::TESForm>(), a_value, false, true, "");
 			MoveGoldBetweenContainers(a_inventoryChanges, new uint32_t, a_buyer, currency->As<RE::TESForm>(), a_value, 4, 0, param_4, 0, 0);
+			customPurchase.QueueEvent(currency);
 		}
 		else {
 			return _getGoldFromPurchase(a_inventoryChanges, a_buyer, a_value, param_4);
@@ -171,5 +202,9 @@ namespace Hooks {
 			a_message = defaultNotEnoughGoldMessage.c_str();
 		}
 		_processRejectedDeal(a_message, a_functionName, a_value);
+
+		if (currency) {
+			customPurchaseFail.QueueEvent(currency);
+		}
 	}
 }

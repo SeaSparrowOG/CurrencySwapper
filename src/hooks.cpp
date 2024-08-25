@@ -3,7 +3,7 @@
 namespace Hooks {
 	bool BarterHooks::Install()
 	{
-		SKSE::AllocTrampoline(70); // 5 * 14
+		SKSE::AllocTrampoline(84); // 6 * 14
 		auto& trampoline = SKSE::GetTrampoline();
 
 		//1.6.1170 -> 1408ec1d9 (Actor::GetGoldAmount)
@@ -25,6 +25,10 @@ namespace Hooks {
 		//1.6.1170 -> 1408ebb51
 		REL::Relocation<std::uintptr_t> rawDealTarget{ REL::ID(50952), 0xB1 };
 		_processRawDeal = trampoline.write_call<5>(rawDealTarget.address(), &ProcessRawDeal);
+
+		//1.6.1170 -> 1408eb8e7 (ShowHUDMessage)
+		REL::Relocation<std::uintptr_t> rejectedDealTarget{ REL::ID(50951), 0x1A7 };
+		_processRejectedDeal = trampoline.write_call<5>(rejectedDealTarget.address(), &ProcessRejectedDeal);
 
 		auto* sGold = RE::GameSettingCollection::GetSingleton()->GetSetting("sGold");
 		if (!sGold) return false;
@@ -156,5 +160,16 @@ namespace Hooks {
 			a_message = defaultMessage.c_str();
 		}
 		return _processRawDeal(param_1, a_message, a_itemValue, a_merchantGold);
+	}
+
+	void BarterHooks::ProcessRejectedDeal(const char* a_message, const char* a_functionName, uint64_t a_value)
+	{
+		if (currency) {
+			std::string currencyName = currency->GetName();
+			defaultNotEnoughGoldMessage = a_message;
+			clib_util::string::replace_all(defaultNotEnoughGoldMessage, defaultReplacement, currencyName);
+			a_message = defaultNotEnoughGoldMessage.c_str();
+		}
+		_processRejectedDeal(a_message, a_functionName, a_value);
 	}
 }

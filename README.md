@@ -4,8 +4,40 @@ SKSE Framework for dynamically swapping the currency vendors trade in. Very usef
 ## Usage
 ### Papyrus
 Currently, the framework relies on Papyrus to swap the trading currency. In order to swap anything, you need to import SEA_BarterFunctions and then simply use the SetCurrency function, passing in the form you want to use as currency. I recommend storing the previous currency somewhere in your script (retrieve it using GetCurrency()) in order to not overwrite changes other authors might make.
-In the future you will be able to introduce keywords and formlists for bartering, but that comes much later.
-_
+In order to use the new functions in your scripts, first import the script "SEA_BarterFunctions" in your script. This is done like this in papyrus:
+```
+Import SEA_BarterFunctions
+```
+After that, you can call functions as needed. Short brief:
+**Functions:**
+- `SetCurrency`
+SetCurrency sets the currency of the game to the specified form. The form itself is stored in your SKSE cosave, so you do not need to change it every game load.
+- `GetCurrency`
+Returns the current currency of the game. Note that if the game is using the default "Gold" currency, this returns NONE. I recommend calling this before changing currencies to know what other currency to swap to (or revert in case of NONE).
+- `ResetCurrency`
+Resets the currency to Gold.
+- `SetCurrencyConsole`
+While you can use this to specify a form by EditorID (requires PO3's Tweaks), this is mostly used by the Custom Console integration.
+- `RegisterFormForAllEvents`
+Registers a given form (usually a quest) for all of the mod's events. The registration is NOT saved in your SKSE cosave, so you have to re-register your forms every game load.
+
+**Events:**
+- `OnCustomPurchase(Form a_kCurrency)`
+Fires when a purchase is completed while there is a custom currency in place.
+- `OnCustomSale(Form a_kCurrency)`
+Fires when the player sells an item while a custom currency is in place.
+- `OnCustomCurrencyFail(Form a_kCurrency)`
+Fires when a purchase fails because the player doesn't have enough of the custom currency.
+- `OnCurrencySwap(Form a_kCurrency)`
+Fires when the currency swaps to a custom currency.
+- `OnCurrencyRevert(Form a_kOldCurrency)`
+Fires when the currency is reverted.
+### Custom Console
+Custom Console is a very useful SKSE plugin for mod authors to quickly test things. If you are using Custom Console, you get access to two new functions that should make your life a lot easier.
+- `crs sc [EDID]`
+Sets the currency to the specified form, using the EditorID. Example: `crs sc IronSword` will set the currency to Iron Swords. Requires PO3's Tweaks to work.
+- `crs rc`
+Resets the currency to Gold.
 ## Building
 ### Requirements:
 - CMake

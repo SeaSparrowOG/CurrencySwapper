@@ -231,7 +231,13 @@ namespace Hooks {
 			if (!menu) return;
 
 			RE::GFxValue var;
-			menu->GetVariable(&var, "_root.Menu_mc.BottomBar_mc.PlayerInfoCard_mc.VendorGoldLabel");
+			if (RE::TESDataHandler::GetSingleton()->LookupLoadedModByName("SkyUI_SE.esp")) {
+				menu->GetVariable(&var, "_root.Menu_mc.bottomBar.playerInfoCard.VendorGoldLabel");
+			}
+			else {
+				menu->GetVariable(&var, "_root.Menu_mc.BottomBar_mc.PlayerInfoCard_mc.VendorGoldLabel");
+			}
+
 			if (var.IsUndefined()) return;
 			defaultVendorInformation = "Vendor " + std::string(currency->GetName());
 			var.SetText(defaultVendorInformation.c_str());

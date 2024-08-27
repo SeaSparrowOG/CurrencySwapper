@@ -110,11 +110,11 @@ namespace Hooks {
 		auto* menu = RE::UI::GetSingleton()->GetMovieView(RE::BarterMenu::MENU_NAME).get();
 		if (!menu) return continueEvent;
 
-		std::string pathToPlayerLabel = "_root.Menu_mc.BottomBar_mc.PlayerInfoCard_mc.PlayerGoldLabel";
-		std::string pathToVendorLabel = "_root.Menu_mc.BottomBar_mc.PlayerInfoCard_mc.VendorGoldLabel";
-		if (RE::TESDataHandler::GetSingleton()->LookupLoadedModByName("SkyUI_SE.esp")) {
-			pathToPlayerLabel = "_root.Menu_mc.bottomBar.playerInfoCard.PlayerGoldLabel";
-			pathToVendorLabel = "_root.Menu_mc.bottomBar.playerInfoCard.VendorGoldLabel";
+		std::string pathToPlayerLabel = "_root.Menu_mc.bottomBar.playerInfoCard.PlayerGoldLabel";
+		std::string pathToVendorLabel = "_root.Menu_mc.bottomBar.playerInfoCard.VendorGoldLabel";
+		if (!RE::TESDataHandler::GetSingleton()->LookupModByName("SkyUI_SE.esp")) {
+			pathToPlayerLabel = "_root.Menu_mc.BottomBar_mc.PlayerInfoCard_mc.PlayerGoldLabel";
+			pathToVendorLabel = "_root.Menu_mc.BottomBar_mc.PlayerInfoCard_mc.VendorGoldLabel";
 		}
 
 		RE::GFxValue var;

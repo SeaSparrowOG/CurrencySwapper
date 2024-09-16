@@ -17,6 +17,7 @@ namespace Hooks {
 		static inline SKSE::RegistrationSet<RE::TESForm*> customPurchase{ "OnCustomPurchase"sv };
 		static inline SKSE::RegistrationSet<RE::TESForm*> customSale{ "OnCustomSale"sv };
 		static inline SKSE::RegistrationSet<RE::TESForm*> customPurchaseFail{ "OnCustomCurrencyFail"sv };
+		static inline SKSE::RegistrationSet<RE::Actor*>   customBarterMenu{ "OnCustomBarterMenu"sv };
 		static inline SKSE::RegistrationSet<RE::TESForm*, RE::TESForm*> currencySwap{ "OnCurrencySwap"sv };
 
 	private:
@@ -38,6 +39,7 @@ namespace Hooks {
 		// "Rejected Deals" are deals where the player has less currency than the value of the thing being sold.
 		static void         ProcessRejectedDeal(const char* a_message, const char* a_functionName, uint64_t a_value);
 		static void         RecalcVendorGold(void* param_1, const char* a_function, void* param_2);
+		static void*        CustomBarterMenu(RE::TESObjectREFR* a_actor, void* arg2);
 
 		// Original function calls.
 		inline static REL::Relocation<decltype(&ProcessRejectedDeal)> _processRejectedDeal;
@@ -47,6 +49,7 @@ namespace Hooks {
 		inline static REL::Relocation<decltype(&GetGoldFromSale)>     _getGoldFromSale;
 		inline static REL::Relocation<decltype(&GetGoldFromPurchase)> _getGoldFromPurchase;
 		inline static REL::Relocation<decltype(&RecalcVendorGold)>    _recalcVendorGold;
+		inline static REL::Relocation<decltype(&CustomBarterMenu)>    _customBarterMenu;
 
 		// Current currency. If nullptr, gold is used. Otherwise it is whatever form is specified.
 		inline static RE::TESBoundObject* currency{ nullptr };

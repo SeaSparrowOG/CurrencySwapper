@@ -3,7 +3,7 @@
 namespace Hooks {
 	bool BarterHooks::Install()
 	{
-		SKSE::AllocTrampoline(98); // 7 * 14
+		SKSE::AllocTrampoline(112); // 7 * 14
 		auto& trampoline = SKSE::GetTrampoline();
 
 		//1.6.1170 -> 1408ec1d9 (Actor::GetGoldAmount)
@@ -33,6 +33,10 @@ namespace Hooks {
 		//1.6.1170 -> 1408ec467
 		REL::Relocation<std::uintptr_t> resetVendorInformationTarget{ REL::ID(50957), 0x2F7 };
 		_recalcVendorGold = trampoline.write_call<5>(resetVendorInformationTarget.address(), &RecalcVendorGold);
+
+		//1.6.1170 -> 1408ebf20
+		REL::Relocation<std::uintptr_t> customBarterTarget{ REL::ID(50955), 0x21 };
+		_customBarterMenu = trampoline.write_call<5>(customBarterTarget.address(), &CustomBarterMenu);
 
 		auto* sGold = RE::GameSettingCollection::GetSingleton()->GetSetting("sGold");
 		if (!sGold) return false;
@@ -77,6 +81,7 @@ namespace Hooks {
 		customSale.Register(a_form);
 		customPurchaseFail.Register(a_form);
 		currencySwap.Register(a_form);
+		customBarterMenu.Register(a_form);
 	}
 
 	void BarterHooks::UnRegisterFormForAllEvents(RE::TESForm* a_form)
@@ -88,6 +93,7 @@ namespace Hooks {
 		customSale.Unregister(a_form);
 		customPurchaseFail.Unregister(a_form);
 		currencySwap.Unregister(a_form);
+		customBarterMenu.Unregister(a_form);
 	}
 
 	RE::TESForm* BarterHooks::GetCurrency()
@@ -242,5 +248,13 @@ namespace Hooks {
 			defaultVendorInformation = "Vendor " + std::string(currency->GetName());
 			var.SetText(defaultVendorInformation.c_str());
 		}
+	}
+
+	void* BarterHooks::CustomBarterMenu(RE::TESObjectREFR* a_actor, void* arg2)
+	{
+		if (a_actor && currency && a_actor->As<RE::Actor>()) {
+			customBarterMenu.QueueEvent(a_actor->As<RE::Actor>());
+		}
+		return _customBarterMenu(a_actor, arg2);
 	}
 }

@@ -247,6 +247,21 @@ namespace Hooks {
 			if (var.IsUndefined()) return;
 			defaultVendorInformation = "Vendor " + std::string(currency->GetName());
 			var.SetText(defaultVendorInformation.c_str());
+
+			auto& merchantEntries = *RE::TESDataHandler::GetSingleton()->merchantInventory->entryList;
+			uint32_t merchantGold = 0;
+			for (auto* entry : merchantEntries) {
+				//Yoda
+				if (entry->object == currency) {
+					merchantGold = entry->countDelta;
+					break;
+				}
+			}
+
+			auto playerGold = RE::PlayerCharacter::GetSingleton()->GetInventoryCounts()[currency];
+
+			const RE::GFxValue args[4]{ playerGold, merchantGold, "Vendor", currency };
+			var.Invoke("UpdatePlayerInfo", nullptr, args, 4);
 		}
 	}
 

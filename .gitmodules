@@ -1,0 +1,3 @@
+[submodule "Extern/CommonLibSSE"]
+	path = Extern/CommonLibSSE
+	url = https://github.com/SeaSparrowOG/CommonLibSSE

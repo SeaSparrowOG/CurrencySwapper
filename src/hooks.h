@@ -51,6 +51,20 @@ namespace Hooks {
 		inline static REL::Relocation<decltype(&RecalcVendorGold)>    _recalcVendorGold;
 		inline static REL::Relocation<decltype(&CustomBarterMenu)>    _customBarterMenu;
 
+
+		// Training Menu specific hooks
+		// Initial menu setup. This function sets the currency count and name (bit hacky).
+		static void  TrainingMenuSetup(RE::TrainingMenu* a_this);
+		static INT64 GetTrainingUpdateGold(RE::Actor* a_this);
+		static INT64 GetTrainingTrainGold(RE::Actor* a_this);
+		static void  GetGoldFromTraining(RE::Actor* a_buyer, RE::Actor* a_trainer, int a_amount);
+
+		// Original function calls.
+		inline static REL::Relocation<decltype(&TrainingMenuSetup)>     _trainingMenuSetup;
+		inline static REL::Relocation<decltype(&GetTrainingUpdateGold)> _getTrainingUpdateGold;
+		inline static REL::Relocation<decltype(&GetTrainingTrainGold)>  _getTrainingTrainGold;
+		inline static REL::Relocation<decltype(&GetGoldFromTraining)>   _getGoldFromTraining;
+
 		// Current currency. If nullptr, gold is used. Otherwise it is whatever form is specified.
 		inline static RE::TESBoundObject* currency{ nullptr };
 		inline static std::string defaultMessage{ "" };
@@ -61,8 +75,8 @@ namespace Hooks {
 		//The following are game functions. I call them from the GetGoldFromPurchase function.
 		static void         GoldRemovedMessage(RE::TESForm* a_formToRemove, int a_ammount,
 			bool arg3, bool arg4, const char* arg5);
-		static uint32_t*    MoveGoldBetweenContainers(RE::InventoryChanges* a_inventoryChanges, uint32_t* param_2, 
-			RE::Actor* a_actor, RE::TESForm* a_form, uint64_t a_concatResult, int arg6, long long** arg7, 
+		static uint32_t* MoveGoldBetweenContainers(RE::InventoryChanges* a_inventoryChanges, uint32_t* param_2,
+			RE::Actor* a_actor, RE::TESForm* a_form, uint64_t a_concatResult, int arg6, long long** arg7,
 			RE::ItemList* arg8, long long** arg9, long long** arg10);
 
 	};

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 set(PROJECT_AUTHOR "SeaSparrow" CACHE STRING "")
 set(NAME "CurrencySwapper" CACHE STRING "")
-set(VERSION 1.1.0 CACHE STRING "")
+set(VERSION 1.2.0 CACHE STRING "")
 
 # ---- Options ----
 option(BUILD_TEST "Sets log level to debug." OFF)
@@ -183,6 +183,25 @@ if (MSVC)
 			"$<$<CONFIG:RELEASE>:/INCREMENTAL:NO;/OPT:REF;/OPT:ICF;/DEBUG:FULL>"
 	)
 endif ()
+
+set(DATA_DIR "${PROJECT_SOURCE_DIR}/data")
+
+install(
+	FILES "${DATA_DIR}/SKSE/CustomConsole/currencySwapper.yaml"
+	DESTINATION "SKSE/CustomConsole"
+)
+
+install(
+	FILES "${DATA_DIR}/Scripts/SEA_BarterFunctions.pex"
+	DESTINATION "Scripts"
+)
+
+install(
+	FILES "${DATA_DIR}/Source/Scripts/SEA_BarterFunctions.psc"
+	DESTINATION "Source/Scripts"
+)
+
+include(components.cmake)
 
 # ---- Post build ----
 if(DEFINED ENV{SKYRIM_MODS_FOLDER} AND IS_DIRECTORY "$ENV{SKYRIM_MODS_FOLDER}")

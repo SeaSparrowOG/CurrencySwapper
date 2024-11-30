@@ -1,0 +1,18 @@
+name: currencyswapper
+alias: crs
+script: SEA_BarterFunctions
+help: Currency Swapper
+subs:
+  - name: revertcurrency
+    alias: rc
+    func: ResetCurrency
+    help: Resets the currency accepted by merchants.
+  - name: setcurrency
+    alias: sc
+    func: SetCurrencyConsole
+    help: Changes the currency accepted by merchants to the specified EditorID. Requires PO3's tweaks.
+    args:
+      - name: setting
+        type: string
+        required: true
+        help: The EditorID of the currency to swap to.

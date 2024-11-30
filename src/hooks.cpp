@@ -3,7 +3,7 @@
 namespace Hooks {
 	bool BarterHooks::Install()
 	{
-		SKSE::AllocTrampoline(112); // 7 * 14
+		SKSE::AllocTrampoline(168); // 11 * 14
 		auto& trampoline = SKSE::GetTrampoline();
 
 		//1.6.1170 -> 1408ec1d9 (Actor::GetGoldAmount)
@@ -37,6 +37,23 @@ namespace Hooks {
 		//1.6.1170 -> 1408ebf20
 		REL::Relocation<std::uintptr_t> customBarterTarget{ REL::ID(50955), 0x21 };
 		_customBarterMenu = trampoline.write_call<5>(customBarterTarget.address(), &CustomBarterMenu);
+
+		//Training Menu Hooks
+		//1.6.1170 -> 14096e6de
+		REL::Relocation<std::uintptr_t> trainingMenuSetupTarget{ REL::ID(52666), 0x17E };
+		_trainingMenuSetup = trampoline.write_call<5>(trainingMenuSetupTarget.address(), &TrainingMenuSetup);
+
+		//1.6.1170 -> 14096ec0b
+		REL::Relocation<std::uintptr_t> trainingMenuGoldUpdateTarget{ REL::ID(52668), 0x31B };
+		_getTrainingUpdateGold = trampoline.write_call<5>(trainingMenuGoldUpdateTarget.address(), &GetTrainingUpdateGold);
+
+		//1.6.1170 -> 14096e7a6
+		REL::Relocation<std::uintptr_t> trainingMenuGoldTrainTarget{ REL::ID(52667), 0x96 };
+		_getTrainingTrainGold = trampoline.write_call<5>(trainingMenuGoldTrainTarget.address(), &GetTrainingTrainGold);
+
+		//1.6.1170 -> 14096e7a6
+		REL::Relocation<std::uintptr_t> trainingMenuGoldTrainTransferTarget{ REL::ID(52667), 0xC3 };
+		_getGoldFromTraining = trampoline.write_call<5>(trainingMenuGoldTrainTransferTarget.address(), &GetGoldFromTraining);
 
 		auto* sGold = RE::GameSettingCollection::GetSingleton()->GetSetting("sGold");
 		if (!sGold) return false;
@@ -188,6 +205,78 @@ namespace Hooks {
 		}
 	}
 
+	void BarterHooks::TrainingMenuSetup(RE::TrainingMenu* a_this)
+	{
+		_trainingMenuSetup(a_this);
+
+		if (!currency) {
+			return;
+		}
+
+		auto& trainingMenuObj = a_this->trainingMenuObj;
+		if (trainingMenuObj.IsUndefined() || trainingMenuObj.IsNull()) {
+			return;
+		}
+
+		RE::GFxValue trainingCard;
+		if (!trainingMenuObj.GetMember("TrainingCard", &trainingCard)) {
+			return;
+		}
+
+		bool managedReplacement = false;
+		int i = 6;
+		trainingCard.VisitMembers([&](const char* a_name, RE::GFxValue a_value) {
+			if (i == 0) {				
+				a_value.SetMember("textAutoSize", { "shrink" });
+				RE::GFxValue verticalHeight;
+				if (a_value.GetMember("_y", &verticalHeight)) {
+					const auto height = verticalHeight.GetNumber();
+					const auto diff = height  -18.0f;
+					a_value.SetMember("_y", { diff });
+				}
+				a_value.SetText(currency->GetName());
+				trainingCard.SetMember(a_name, a_value);
+				managedReplacement = true;
+			}
+			--i;
+			});
+		if (!managedReplacement) {
+			return;
+		}
+
+		auto& currentGold = a_this->currentGold;
+		const auto currencyCount = RE::PlayerCharacter::GetSingleton()->GetItemCount(currency);
+		const auto currencyCountStr = std::to_string(currencyCount);
+		currentGold.SetText(currencyCountStr.c_str());
+	}
+
+	INT64 BarterHooks::GetTrainingUpdateGold(RE::Actor* a_this)
+	{
+		if (currency) {
+			return RE::PlayerCharacter::GetSingleton()->GetItemCount(currency);
+		} 
+		return _getTrainingUpdateGold(a_this);
+	}
+
+	INT64 BarterHooks::GetTrainingTrainGold(RE::Actor* a_this)
+	{
+		if (currency) {
+			return RE::PlayerCharacter::GetSingleton()->GetItemCount(currency);
+		}
+		return _getTrainingUpdateGold(a_this);
+	}
+
+	void BarterHooks::GetGoldFromTraining(RE::Actor* a_buyer, RE::Actor* a_trainer, int a_amount)
+	{
+		if (currency) {
+			GoldRemovedMessage(currency->As<RE::TESForm>(), a_amount, false, true, "");
+			a_buyer->RemoveItem(currency, a_amount, RE::ITEM_REMOVE_REASON::kSelling, nullptr, a_trainer);
+		}
+		else {
+			_getGoldFromTraining(a_buyer, a_trainer, a_amount);
+		}
+	}
+
 	void BarterHooks::GoldRemovedMessage(RE::TESForm* a_formToRemove, int a_ammount, bool arg3, bool arg4, const char* arg5)
 	{
 		using func_t = decltype(&BarterHooks::GoldRemovedMessage);
@@ -196,7 +285,7 @@ namespace Hooks {
 	}
 
 	uint32_t* BarterHooks::MoveGoldBetweenContainers(RE::InventoryChanges* a_inventoryChanges, uint32_t* param_2, RE::Actor* a_actor, RE::TESForm* a_form,
-								   uint64_t a_concatResult, int arg6, long long** arg7, RE::ItemList* arg8, long long** arg9, long long **arg10)
+		uint64_t a_concatResult, int arg6, long long** arg7, RE::ItemList* arg8, long long** arg9, long long** arg10)
 	{
 		using func_t = decltype(&BarterHooks::MoveGoldBetweenContainers);
 		static REL::Relocation<func_t> func{ REL::ID(16059) };

@@ -1,21 +1,15 @@
 {
-  "name": "replaceme",
-  "version-string": "1.0.0",
-  "description": "Template for SKSE plugin built using my commonlib. MIT License by default.",
-  "homepage": "",
+  "name": "currency-swapper",
+  "version-string": "2.0.0",
+  "description": "Allows for the manipulation of the game's default currency through scripts.",
+  "homepage": "https://github.com/SeaSparrowOG/CurrencySwapper",
   "license": "MIT",
   "dependencies": [
+    "boost-stl-interfaces",
+    "fmt",
     "rsm-binary-io",
     "spdlog",
-    "clib-util",
-    "jsoncpp",
     "xbyak"
   ],
-  "overrides": [
-    {
-      "name": "fmt",
-      "version": "9.1.0"
-    }
-  ],
-  "builtin-baseline": "b7dba7f9aad09a56900f21cd78cfda1258e54e38"
+  "builtin-baseline": "f4ea42fa5c2b993cf2b75725331616999e2e34d1"
 }

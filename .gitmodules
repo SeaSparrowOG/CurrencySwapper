@@ -4,3 +4,6 @@
 [submodule "Tools/Bethesda-CMakeModules"]
 	path = Tools/Bethesda-CMakeModules
 	url = https://github.com/Exit-9B/BethesdaCMakeModules.git
+[submodule "Tools/SKSE-CMakeModules"]
+	path = Tools/SKSE-CMakeModules
+	url = https://github.com/Exit-9B/SKSE-CMakeModules.git

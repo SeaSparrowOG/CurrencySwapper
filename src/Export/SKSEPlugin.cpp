@@ -17,6 +17,25 @@ extern "C" DLLEXPORT constinit auto SKSEPlugin_Version = []()
 	}();
 #endif
 
+#ifndef NDEBUG
+void SetupLog() {
+	auto logsFolder = SKSE::log::log_directory();
+	if (!logsFolder) SKSE::stl::report_and_fail("SKSE log_directory not provided, logs disabled.");
+
+	auto pluginName = Plugin::NAME;
+	auto logFilePath = *logsFolder / std::format("{}.log", pluginName);
+	auto fileLoggerPtr = std::make_shared<spdlog::sinks::basic_file_sink_mt>(logFilePath.string(), true);
+	auto loggerPtr = std::make_shared<spdlog::logger>("log", std::move(fileLoggerPtr));
+
+	spdlog::set_default_logger(std::move(loggerPtr));
+	spdlog::set_level(spdlog::level::debug);
+	spdlog::flush_on(spdlog::level::debug);
+
+	//Pattern
+	spdlog::set_pattern("%v");
+}
+#endif
+
 extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Query(const SKSE::QueryInterface* a_skse, SKSE::PluginInfo* a_info)
 {
 	a_info->infoVersion = SKSE::PluginInfo::kVersion;
@@ -43,8 +62,12 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Query(const SKSE::QueryInterface* a
 
 extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_skse)
 {
+#ifndef NDEBUG
+	SetupLog();
+	SKSE::Init(a_skse, false);
+#else
 	SKSE::Init(a_skse);
-
+#endif
 	SECTION_SEPARATOR;
 	logger::info("{} v{}"sv, Plugin::NAME, Plugin::VERSION.string());
 	logger::info("Author: SeaSparrow"sv);
@@ -59,9 +82,6 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
 
 	logger::info("Performing startup tasks..."sv);
 
-	if (!Settings::INI::Read()) {
-		SKSE::stl::report_and_fail("Failed to load INI settings. Check the log for more information."sv);
-	}
 	if (!Hooks::Install()) {
 		SKSE::stl::report_and_fail("Failed to install hooks. Check the log for more information."sv);
 	}

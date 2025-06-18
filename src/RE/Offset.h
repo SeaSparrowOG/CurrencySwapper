@@ -2,8 +2,12 @@
 
 namespace RE::Offset
 {
-	namespace Example
+	namespace InventoryChanges
 	{
-		constexpr auto FunctionName = REL::ID(55976);
+		constexpr auto MoveItemBetweenContainers = REL::ID(16059);
+	}
+	namespace PlayerCharacter
+	{
+		constexpr auto RemoveItem = REL::ID(51636);
 	}
 }

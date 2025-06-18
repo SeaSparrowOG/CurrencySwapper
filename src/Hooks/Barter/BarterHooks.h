@@ -16,7 +16,7 @@ namespace Hooks
 
 		struct GetVendorGoldHook {
 			inline static bool Install();
-			inline static int32_t GetVendorGold(RE::InventoryChanges* a_player);
+			inline static int32_t GetVendorGold(RE::InventoryChanges* a_vendorInventory);
 			inline static REL::Relocation<decltype(GetVendorGold)> _getVendorGold;
 		};
 

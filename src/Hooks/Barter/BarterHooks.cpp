@@ -1,7 +1,100 @@
 #include "BarterHooks.h"
 
+#include "CurrencyManager/CurrencyManager.h"
+
 namespace Hooks::Barter
 {
+	inline int32_t GetPlayerGoldHook::GetPlayerGold(RE::Actor* a_player) {
+		LOG_DEBUG("Hook: GetPlayerGold"sv);
+		int32_t out = 0;
+		if (CurrencyManager::GetPlayerGold(a_player, out)) {
+			LOG_DEBUG("  >Alt Currency, result: {}", out);
+			return out;
+		}
+		return _getPlayerGold(a_player);
+	}
+
+	inline int32_t GetVendorGoldHook::GetVendorGold(RE::InventoryChanges* a_vendorInventory)
+	{
+		LOG_DEBUG("Hook: GetVendorGold"sv);
+		int32_t out = 0;
+		if (CurrencyManager::GetVendorGold(a_vendorInventory, out)) {
+			LOG_DEBUG("  >Alt Currency, result: {}", out);
+			return out;
+		}
+		return _getVendorGold(a_vendorInventory);
+	}
+
+	inline RE::TESForm* GetGoldFromSaleHook::GetGoldFromSale(RE::FormID a_id)
+	{
+		LOG_DEBUG("Hook: GetGoldFromSale"sv);
+		RE::TESForm* response = nullptr;
+		if (CurrencyManager::SendCustomSaleEvent(response)) {
+			LOG_DEBUG("  >Custom, returning {}"sv, response ? response->GetName() : "NULL");
+			return response;
+		}
+		return _getGoldFromSale(a_id);
+	}
+
+	inline int32_t GetGoldFromPurchaseHook::GetGoldFromPurchase(RE::InventoryChanges* a_inventoryChanges,
+		RE::Actor* a_buyer,
+		int32_t a_value,
+		RE::ItemList* a_itemList)
+	{
+		LOG_DEBUG("Hook: GetGoldFromPurchase"sv);
+		if (CurrencyManager::GetGoldFromPurchase(a_inventoryChanges, a_buyer, a_value, a_itemList)) {
+			return 0;
+		}
+		return _getGoldFromPurchase(a_inventoryChanges, a_buyer, a_value, a_itemList);
+	}
+
+	inline RE::TESForm* RawDealHook::ProcessRawDeal(uint64_t* param_1,
+		const char* a_message,
+		uint64_t a_concatResult,
+		uint64_t param_4)
+	{
+		LOG_DEBUG("Hook: ProcessRawDeal"sv);
+		std::string out = "";
+		if (CurrencyManager::ProcessRawDeal(a_concatResult, param_4, out)) {
+			LOG_DEBUG("  >Custom Currency, raw deal warning: {}", out);
+			return _processRawDeal(param_1, out.c_str(), a_concatResult, param_4);
+		}
+		return _processRawDeal(param_1, a_message, a_concatResult, param_4);
+	}
+
+	inline RE::TESForm* RejectedDealHook::ProcessRejectedDeal(const char* a_message, const char* a_functionName, uint64_t a_value)
+	{
+		LOG_DEBUG("Hook: ProcessRejectedDeal"sv);
+		CurrencyManager::SendRejectedDealEvent();
+		if (CurrencyManager::ProcessRejectedDeal()) {
+			return CurrencyManager::GetCurrency();
+		}
+		return _processRejectedDeal(a_message, a_functionName, a_value);
+	}
+
+	inline RE::TESForm* RecalcVendorGoldHook::RecalcVendorGold(const char* a_message,
+		const char* a_functionName,
+		uint64_t a_value)
+	{
+		LOG_DEBUG("Hook: RecalcVendorGold"sv);
+		auto* response = _recalcVendorGold(a_message, a_functionName, a_value);
+		CurrencyManager::ResetVendorInfo();
+		return response;
+	}
+
+	inline void* ShowBarterMenuHook::ShowBarterMenu(RE::TESObjectREFR* a_actor, void* arg2)
+	{
+		LOG_DEBUG("Hook: Custom Menu"sv);
+		CurrencyManager::SendBarterMenuEvent(a_actor);
+		return _showBarterMenu(a_actor, arg2);
+	}
+
+	/*
+	=========================================================================================================
+	                                     INSTALLATION PAST HERE
+	=========================================================================================================
+	*/
+
 	bool Install() {
 		bool nominal = true;
 		if (!GetPlayerGoldHook::Install()) {
@@ -30,6 +123,7 @@ namespace Hooks::Barter
 		}
 		return nominal;
 	}
+
 	inline bool GetPlayerGoldHook::Install() {
 		logger::info("  >Installing the Get Player Gold hook..."sv);
 		REL::Relocation<std::uintptr_t> target{ REL::ID(50957), 0x69 };
@@ -40,12 +134,6 @@ namespace Hooks::Barter
 		auto& trampoline = SKSE::GetTrampoline();
 		_getPlayerGold = trampoline.write_call<5>(target.address(), &GetPlayerGold);
 		return true;
-	}
-
-	inline int32_t GetPlayerGoldHook::GetPlayerGold(RE::Actor* a_player) {
-
-		LOG_DEBUG("Hook: GetPlayerGold"sv);
-		return _getPlayerGold(a_player);
 	}
 
 	inline bool GetVendorGoldHook::Install() {
@@ -60,12 +148,6 @@ namespace Hooks::Barter
 		return true;
 	}
 
-	inline int32_t GetVendorGoldHook::GetVendorGold(RE::InventoryChanges* a_player)
-	{
-		LOG_DEBUG("Hook: GetVendorGold"sv);
-		return _getVendorGold(a_player);
-	}
-
 	inline bool GetGoldFromSaleHook::Install() {
 		logger::info("  >Installing the Get Gold from Sale hook..."sv);
 		REL::Relocation<std::uintptr_t> target{ REL::ID(50951), 0x257 };
@@ -76,12 +158,6 @@ namespace Hooks::Barter
 		auto& trampoline = SKSE::GetTrampoline();
 		_getGoldFromSale = trampoline.write_call<5>(target.address(), &GetGoldFromSale);
 		return true;
-	}
-
-	inline RE::TESForm* GetGoldFromSaleHook::GetGoldFromSale(RE::FormID a_id)
-	{
-		LOG_DEBUG("Hook: GetGoldFromSale"sv);
-		return _getGoldFromSale(a_id);
 	}
 
 	inline bool GetGoldFromPurchaseHook::Install() {
@@ -96,15 +172,6 @@ namespace Hooks::Barter
 		return true;
 	}
 
-	inline int32_t GetGoldFromPurchaseHook::GetGoldFromPurchase(RE::InventoryChanges* a_inventoryChanges,
-		RE::Actor* a_buyer,
-		int32_t a_value,
-		RE::ItemList* a_itemList)
-	{
-		LOG_DEBUG("Hook: GetGoldFromPurchase"sv);
-		return _getGoldFromPurchase(a_inventoryChanges, a_buyer, a_value, a_itemList);
-	}
-
 	inline bool RawDealHook::Install() {
 		logger::info("  >Installing the Raw Deal hook..."sv);
 		REL::Relocation<std::uintptr_t> target{ REL::ID(50952), 0xB1 };
@@ -115,15 +182,6 @@ namespace Hooks::Barter
 		auto& trampoline = SKSE::GetTrampoline();
 		_processRawDeal = trampoline.write_call<5>(target.address(), &ProcessRawDeal);
 		return true;
-	}
-
-	inline RE::TESForm* RawDealHook::ProcessRawDeal(uint64_t* param_1,
-		const char* a_message,
-		uint64_t a_concatResult,
-		uint64_t param_4)
-	{
-		LOG_DEBUG("Hook: ProcessRawDeal"sv);
-		return _processRawDeal(param_1, a_message, a_concatResult, param_4);
 	}
 
 	inline bool RejectedDealHook::Install() {
@@ -138,12 +196,6 @@ namespace Hooks::Barter
 		return true;
 	}
 
-	inline RE::TESForm* RejectedDealHook::ProcessRejectedDeal(const char* a_message, const char* a_functionName, uint64_t a_value)
-	{
-		LOG_DEBUG("Hook: ProcessRejectedDeal"sv);
-		return _processRejectedDeal(a_message, a_functionName, a_value);
-	}
-
 	inline bool RecalcVendorGoldHook::Install() {
 		logger::info("  >Installing the Recalc Vendor Gold hook..."sv);
 		REL::Relocation<std::uintptr_t> target{ REL::ID(50957), 0x2F7 };
@@ -156,14 +208,6 @@ namespace Hooks::Barter
 		return true;
 	}
 
-	inline RE::TESForm* RecalcVendorGoldHook::RecalcVendorGold(const char* a_message, 
-		const char* a_functionName, 
-		uint64_t a_value) 
-	{
-		LOG_DEBUG("Hook: RecalcVendorGold"sv);
-		return _recalcVendorGold(a_message, a_functionName, a_value);
-	}
-
 	inline bool ShowBarterMenuHook::Install() {
 		logger::info("  >Installing the Show Barter Menu hook..."sv);
 		REL::Relocation<std::uintptr_t> target{ REL::ID(50955), 0x21 };
@@ -174,11 +218,5 @@ namespace Hooks::Barter
 		auto& trampoline = SKSE::GetTrampoline();
 		_showBarterMenu = trampoline.write_call<5>(target.address(), &ShowBarterMenu);
 		return true;
-	}
-
-	inline void* ShowBarterMenuHook::ShowBarterMenu(RE::TESObjectREFR* a_actor, void* arg2)
-	{
-		LOG_DEBUG("Hook: Custom Menu"sv);
-		return _showBarterMenu(a_actor, arg2);
 	}
 }

@@ -1,3 +1,4 @@
+#include "CurrencyManager/CurrencyManager.h"
 #include "Hooks/Hooks.h"
 #include "Papyrus/Papyrus.h"
 #include "Serialization/Serde.h"
@@ -60,7 +61,7 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Query(const SKSE::QueryInterface* a
 	return true;
 }
 
-extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_skse)
+extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface * a_skse)
 {
 #ifndef NDEBUG
 	SetupLog();
@@ -86,6 +87,9 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
 		SKSE::stl::report_and_fail("Failed to install hooks. Check the log for more information."sv);
 	}
 
+	if (!CurrencyManager::Initialize()) {
+		SKSE::stl::report_and_fail("Failed to install Currency Manager. Check the log for details."sv);
+	}
 	SKSE::GetPapyrusInterface()->Register(Papyrus::RegisterFunctions);
 
 	logger::info("Setting up serialization system..."sv);

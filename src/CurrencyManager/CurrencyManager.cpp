@@ -163,15 +163,69 @@ namespace CurrencyManager
 	}
 
 	bool CurrencyManager::Save(SKSE::SerializationInterface* a_intfc) {
+		logger::info("Saving currency data..."sv);
+		if (!a_intfc->OpenRecord(StoredCurrency, Version)) {
+			logger::error("  >Failed to open record for currency data."sv);
+			return false;
+		}
+
+		RE::FormID currencyID = customCurrency ? customCurrency->GetFormID() : 0;
+		if (!a_intfc->WriteRecordData(currencyID)) {
+			logger::error("  >Failed to write currency ID: {}"sv, currencyID);
+			return false;
+		}
 		return true;
 	}
 
 	bool CurrencyManager::Load(SKSE::SerializationInterface* a_intfc) {
+		std::uint32_t type;
+		std::uint32_t version;
+		std::uint32_t length;
+		while (a_intfc->GetNextRecordInfo(type, version, length)) {
+			if (type != StoredCurrency) {
+				continue;
+			}
+
+			logger::info("Loading currency data..."sv);
+			if (version == 1) {
+				logger::info("  >Legacy 1"sv);
+				RE::FormID oldID;
+				if (!a_intfc->ReadRecordData(oldID)) {
+					logger::error("  >Failed to read FormID"sv);
+					return false;
+				}
+				RE::FormID newID;
+				if (!a_intfc->ResolveFormID(oldID, newID)) {
+					logger::error("  >Failed to resolve FormID ({:08X})"sv, oldID);
+					return false;
+				}
+				customCurrency = RE::TESForm::LookupByID<RE::TESBoundObject>(newID);
+			}
+			else if (version == 2) {
+				RE::FormID oldID;
+				if (!a_intfc->ReadRecordData(oldID)) {
+					logger::error("  >Failed to read FormID"sv);
+					return false;
+				}
+				RE::FormID newID;
+				if (!a_intfc->ResolveFormID(oldID, newID)) {
+					logger::error("  >Failed to resolve FormID ({:08X})"sv, oldID);
+					return false;
+				}
+				customCurrency = RE::TESForm::LookupByID<RE::TESBoundObject>(newID);
+			}
+			else {
+				logger::error("Unsupported version {} for type {}"sv, version, type);
+				return false;
+			}
+			return true;
+		}
 		return true;
 	}
 
 	void CurrencyManager::Revert(SKSE::SerializationInterface* a_intfc) {
 		(void)a_intfc;
+		customCurrency = nullptr;
 	}
 
 

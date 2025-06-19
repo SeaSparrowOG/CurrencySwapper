@@ -78,6 +78,10 @@ namespace CurrencyManager
 		RE::TESBoundObject* customCurrency{ nullptr };
 
 		RE::FormID barterActorID{ 0 };
+
+		inline static constexpr std::uint32_t Version = 1;
+		inline static constexpr std::uint32_t ID = 'AMSF';
+		inline static constexpr std::uint32_t StoredCurrency = 'STCU';
 	};
 
 	inline static constexpr const char* pathToPlayerLabel = "_root.Menu_mc.BottomBar_mc.PlayerInfoCard_mc.PlayerGoldLabel";

@@ -14,6 +14,12 @@ namespace RE
 		static REL::Relocation<func_t> func{ RE::Offset::PlayerCharacter::RemoveItem };
 		return func(a_formToRemove, a_ammount, arg3, arg4, arg5);
 	}
+	static void UpdateBottomBar(BarterMenu* a_this)
+	{
+		using func_t = decltype(&UpdateBottomBar);
+		static REL::Relocation<func_t> func{ RE::Offset::BarterMenu::UpdateBottomBar };
+		return func(a_this);
+	}
 
 	static uint32_t* MoveGoldBetweenContainers(RE::InventoryChanges* a_inventoryChanges, 
 		uint32_t* param_2,

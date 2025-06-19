@@ -2,6 +2,10 @@
 
 namespace RE::Offset
 {
+	namespace BarterMenu
+	{
+		constexpr auto UpdateBottomBar = REL::ID(50957);
+	}
 	namespace InventoryChanges
 	{
 		constexpr auto MoveItemBetweenContainers = REL::ID(16059);

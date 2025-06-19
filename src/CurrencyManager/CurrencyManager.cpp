@@ -298,49 +298,6 @@ namespace CurrencyManager
 		customPurchaseFail.QueueEvent(customCurrency);
 	}
 
-	void CurrencyManager::ConstructCustomMenu(RE::TrainingMenu* a_this)
-	{
-		if (!customCurrency) {
-			return;
-		}
-
-		auto& trainingMenuObj = a_this->trainingMenuObj;
-		if (trainingMenuObj.IsUndefined() || trainingMenuObj.IsNull()) {
-			return;
-		}
-
-		RE::GFxValue trainingCard;
-		if (!trainingMenuObj.GetMember("TrainingCard", &trainingCard)) {
-			return;
-		}
-
-		bool managedReplacement = false;
-		int i = 6;
-		trainingCard.VisitMembers([&](const char* a_name, RE::GFxValue a_value) {
-			if (i == 0) {
-				a_value.SetMember("textAutoSize", { "shrink" });
-				RE::GFxValue verticalHeight;
-				if (a_value.GetMember("_y", &verticalHeight)) {
-					const auto height = verticalHeight.GetNumber();
-					const auto diff = height - 18.0f;
-					a_value.SetMember("_y", { diff });
-				}
-				a_value.SetText(customCurrency->GetName());
-				trainingCard.SetMember(a_name, a_value);
-				managedReplacement = true;
-			}
-			--i;
-			});
-		if (!managedReplacement) {
-			return;
-		}
-
-		auto& currentGold = a_this->currentGold;
-		const auto currencyCount = RE::PlayerCharacter::GetSingleton()->GetItemCount(customCurrency);
-		const auto currencyCountStr = std::to_string(currencyCount);
-		currentGold.SetText(currencyCountStr.c_str());
-	}
-
 	bool CurrencyManager::SendRawDealWarning(uint64_t a_value, uint64_t a_merchantGold, std::string&  a_out)
 	{
 		if (customCurrency) {
@@ -371,11 +328,17 @@ namespace CurrencyManager
 
 		auto* player = RE::PlayerCharacter::GetSingleton();
 		auto* ui = RE::UI::GetSingleton();
-		auto menu = ui && player ? ui->GetMovieView(RE::BarterMenu::MENU_NAME) : nullptr;
+		auto* dh = RE::TESDataHandler::GetSingleton();
+		assert(player && ui && dh);
+		if (!player || !ui || !dh) return;
+
+		auto menu = ui->GetMovieView(RE::BarterMenu::MENU_NAME);
+		assert(menu);
 		if (!menu) return;
 
 		RE::GFxValue var;
-		if (RE::TESDataHandler::GetSingleton()->LookupLoadedModByName("SkyUI_SE.esp")) {
+		bool useSkyUIPaths = dh->LookupLoadedModByName("SkyUI_SE.esp"sv);
+		if (useSkyUIPaths) {
 			menu->GetVariable(&var, pathToVendorLabel_SkyUI);
 		}
 		else {
@@ -407,11 +370,11 @@ namespace CurrencyManager
 		auto playerGold = inventoryCounts.contains(customCurrency) ? inventoryCounts.at(customCurrency) : 0;
 
 		if (const auto* vendorActor = RE::TESForm::LookupByID<RE::Actor>(barterActorID); vendorActor) {
-			const RE::GFxValue args[4]{ playerGold, merchantGold, vendorActor->GetName(), customCurrency};
+			const RE::GFxValue args[4]{ playerGold, merchantGold, vendorActor->GetName(), nullptr};
 			var.Invoke("UpdatePlayerInfo", nullptr, args, 4);
 		}
 		else {
-			const RE::GFxValue args[4]{ playerGold, merchantGold, "Vendor", customCurrency };
+			const RE::GFxValue args[4]{ playerGold, merchantGold, "Vendor", nullptr };
 			var.Invoke("UpdatePlayerInfo", nullptr, args, 4);
 		}
 		LOG_DEBUG("  >Alt currency, updated menu."sv);
@@ -432,16 +395,20 @@ namespace CurrencyManager
 		auto* ui = RE::UI::GetSingleton();
 		auto* dh = RE::TESDataHandler::GetSingleton();
 		auto* player = RE::PlayerCharacter::GetSingleton();
-		auto menu = ui && dh && player ? ui->GetMovieView(RE::BarterMenu::MENU_NAME) : nullptr;
+		assert(ui && dh && player);
+		if (!ui || !dh || !player) {
+			return Control::kContinue;
+		}
+
+		auto menu = ui->GetMovieView(RE::BarterMenu::MENU_NAME);
 		if (!menu) {
 			return Control::kContinue;
 		}
 
-		bool useSkyUI = dh->LookupLoadedModByName("SkyUI_SE.esp"sv);
 		std::string currencyName = customCurrency->GetName();
-
+		bool useSkyUIPaths = dh->LookupLoadedModByName("SkyUI_SE.esp"sv);
 		RE::GFxValue var;
-		if (useSkyUI) {
+		if (useSkyUIPaths) {
 			menu->GetVariable(&var, pathToPlayerLabel_SkyUI);
 			if (var.IsUndefined()) {
 				return Control::kContinue;
@@ -474,6 +441,13 @@ namespace CurrencyManager
 			currencyName = fmt::format("Vendor {}", currencyName);
 		}
 		var.SetText(currencyName.c_str());
+
+		auto trainingMenu = ui->GetMenu<RE::BarterMenu>();
+		if (!trainingMenu) {
+			return Control::kContinue;
+		}
+
+		RE::UpdateBottomBar(trainingMenu.get()); //Note that this triggers UpdatePlayerInfo. Do not call it there.
 		return Control::kContinue;
 	}
 }

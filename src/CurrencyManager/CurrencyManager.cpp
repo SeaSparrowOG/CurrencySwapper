@@ -756,6 +756,12 @@ namespace CurrencyManager
 			return;
 		}
 
+		auto* trainingActor = a_menu->trainer;
+		if (!trainingActor) {
+			return;
+		}
+		trainerActorID = trainingActor->formID;
+
 		auto& currentGold = a_menu->currentGold;
 		const auto currencyCount = RE::PlayerCharacter::GetSingleton()->GetItemCount(customCurrency);
 		const auto currencyCountStr = std::to_string(currencyCount);
@@ -771,7 +777,8 @@ namespace CurrencyManager
 		if (!trainer || !a_player) {
 			return false;
 		}
-		a_player->RemoveItem(customCurrency, a_value, RE::ITEM_REMOVE_REASON::kStoreInContainer, nullptr, trainer);
+		a_player->RemoveItem(customCurrency, a_value, RE::ITEM_REMOVE_REASON::kRemove, nullptr, nullptr);
+		trainer->AddObjectToContainer(customCurrency, nullptr, a_value, nullptr);
 		return true;
 	}
 }

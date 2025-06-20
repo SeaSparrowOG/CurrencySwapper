@@ -4,7 +4,7 @@ namespace Hooks
 {
 	namespace Training
 	{
-		inline static constexpr size_t allocSize = 4u * 14u;
+		inline static constexpr size_t allocSize = 6u * 14u;
 		bool Install();
 
 		struct SetupTrainingMenuHook {
@@ -21,7 +21,7 @@ namespace Hooks
 
 		struct CalculateTrainingCostHook {
 			inline static bool Install();
-			inline static uint64_t CalculateTrainingCost(uint32_t a_skillLevel);
+			inline static float CalculateTrainingCost(uint32_t a_skillLevel);
 			inline static REL::Relocation<decltype(CalculateTrainingCost)> _calculateTrainingCost;
 		};
 
@@ -29,6 +29,20 @@ namespace Hooks
 			inline static bool Install();
 			inline static void RemovePlayerGold(RE::PlayerCharacter* a_this, void* a2, int32_t a_amount);
 			inline static REL::Relocation<decltype(RemovePlayerGold)> _removePlayerGold;
+		};
+
+		struct SendNotEnoughGoldMessageHook {
+			inline static bool Install();
+			inline static void SendNotEnoughGoldMessage(const char* a_message,
+				const char* a_sound,
+				bool a_cancelIfQueued);
+			inline static REL::Relocation<decltype(SendNotEnoughGoldMessage)> _sendNotEnoughGoldMessage;
+		};
+
+		struct UpdateTrainingCurrencyHook {
+			inline static bool Install();
+			inline static int32_t UpdateTrainingCurrency(RE::Actor* a_player);
+			inline static REL::Relocation<decltype(UpdateTrainingCurrency)> _updateTrainingCurrency;
 		};
 	}
 }

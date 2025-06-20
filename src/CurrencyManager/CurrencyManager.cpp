@@ -112,11 +112,11 @@ namespace CurrencyManager
 		}
 	}
 
-	void ResetVendorInfo()
+	void ResetVendorInfo(RE::GFxValue* a_updateObj)
 	{
 		auto* manager = CurrencyManager::GetSingleton();
 		if (manager) {
-			manager->ResetVendorInfo();
+			manager->ResetVendorInfo(a_updateObj);
 		}
 	}
 }
@@ -374,7 +374,7 @@ namespace CurrencyManager
 		return false;
 	}
 
-	void CurrencyManager::ResetVendorInfo()
+	void CurrencyManager::ResetVendorInfo(RE::GFxValue* a_updateObj)
 	{
 		if (!customCurrency) {
 			return;
@@ -424,14 +424,19 @@ namespace CurrencyManager
 		auto playerGold = inventoryCounts.contains(customCurrency) ? inventoryCounts.at(customCurrency) : 0;
 
 		if (const auto* vendorActor = RE::TESForm::LookupByID<RE::Actor>(barterActorID); vendorActor) {
-			const RE::GFxValue args[4]{ playerGold, merchantGold, vendorActor->GetName(), nullptr};
+			const RE::GFxValue args[4]{ playerGold, merchantGold, vendorActor->GetName(), *a_updateObj };
 			var.Invoke("UpdatePlayerInfo", nullptr, args, 4);
 		}
 		else {
-			const RE::GFxValue args[4]{ playerGold, merchantGold, "Vendor", nullptr };
+			const RE::GFxValue args[4]{ playerGold, merchantGold, "Vendor", *a_updateObj };
 			var.Invoke("UpdatePlayerInfo", nullptr, args, 4);
 		}
-		LOG_DEBUG("  >Alt currency, updated menu."sv);
+		if (useSkyUIPaths) {
+			UpdateSkyUIText(a_updateObj);
+		}
+		else {
+			UpdateVanillaText(a_updateObj);
+		}
 	}
 
 	RE::BSEventNotifyControl CurrencyManager::ProcessEvent(const RE::MenuOpenCloseEvent* a_event, RE::BSTEventSource<RE::MenuOpenCloseEvent>*)
@@ -503,5 +508,194 @@ namespace CurrencyManager
 
 		RE::UpdateBottomBar(trainingMenu.get()); //Note that this triggers UpdatePlayerInfo. Do not call it there.
 		return Control::kContinue;
+	}
+
+	void CurrencyManager::UpdateSkyUIText(RE::GFxValue* a_updateObj) {
+		auto* ui = RE::UI::GetSingleton();
+		auto barterMenu = ui ? ui->GetMenu<RE::BarterMenu>() : nullptr;
+		if (!barterMenu) {
+			LOG_DEBUG("  >UpdateSkyUIText: Failed to get BarterMenu."sv);
+			return;
+		}
+
+		auto& root = barterMenu->root;
+		if (root.IsUndefined() || root.IsNull()) {
+			LOG_DEBUG("  >UpdateSkyUIText: Failed to get root."sv);
+			return;
+		}
+
+		RE::GFxValue bottomBar;
+		if (!root.GetMember("bottomBar", &bottomBar)) {
+			LOG_DEBUG("  >UpdateSkyUIText: Failed to get bottomBar."sv);
+			return;
+		}
+		if (bottomBar.IsUndefined() || bottomBar.IsNull()) {
+			LOG_DEBUG("  >UpdateSkyUIText: bottomBar is undefined or null."sv);
+			return;
+		}
+
+		// playerInfoCard
+		RE::GFxValue playerInfoCard;
+		if (!bottomBar.GetMember("playerInfoCard", &playerInfoCard)) {
+			LOG_DEBUG("  >UpdateSkyUIText: Failed to get playerInfoCard."sv);
+			return;
+		}
+		if (playerInfoCard.IsUndefined() || playerInfoCard.IsNull()) {
+			LOG_DEBUG("  >UpdateSkyUIText: playerInfoCard is undefined or null."sv);
+			return;
+		}
+
+		// PlayerGoldValue
+		RE::GFxValue playerGoldValue;
+		if (!playerInfoCard.GetMember("PlayerGoldValue", &playerGoldValue)) {
+			LOG_DEBUG("  >UpdateSkyUIText: Failed to get PlayerGoldValue."sv);
+			return;
+		}
+		if (playerGoldValue.IsUndefined() || playerGoldValue.IsNull()) {
+			LOG_DEBUG("  >UpdateSkyUIText: PlayerGoldValue is undefined or null."sv);
+			return;
+		}
+		RE::GFxValue playerGoldValueX;
+		if (!playerGoldValue.GetMember("_x", &playerGoldValueX)) {
+			LOG_DEBUG("  >UpdateSkyUIText: Failed to get PlayerGoldValue._x."sv);
+			return;
+		}
+		if (playerGoldValueX.IsUndefined() || playerGoldValueX.IsNull()) {
+			LOG_DEBUG("  >UpdateSkyUIText: PlayerGoldValue._x is undefined or null."sv);
+			return;
+		}
+
+		// PlayerGoldLabel
+		RE::GFxValue playerGoldLabel;
+		if (!playerInfoCard.GetMember("PlayerGoldLabel", &playerGoldLabel)) {
+			LOG_DEBUG("  >UpdateSkyUIText: Failed to get PlayerGoldLabel."sv);
+			return;
+		}
+		if (playerGoldLabel.IsUndefined() || playerGoldLabel.IsNull()) {
+			LOG_DEBUG("  >UpdateSkyUIText: PlayerGoldLabel is undefined or null."sv);
+			return;
+		}
+		RE::GFxValue playerGoldLabelX;
+		if (!playerGoldLabel.GetMember("_x", &playerGoldLabelX)) {
+			LOG_DEBUG("  >UpdateSkyUIText: Failed to get PlayerGoldLabel._x."sv);
+			return;
+		}
+		if (playerGoldLabelX.IsUndefined() || playerGoldLabelX.IsNull()) {
+			LOG_DEBUG("  >UpdateSkyUIText: PlayerGoldLabel._x is undefined or null."sv);
+			return;
+		}
+
+		// CarryWeightValue
+		RE::GFxValue carryWeightValue;
+		if (!playerInfoCard.GetMember("CarryWeightValue", &carryWeightValue)) {
+			LOG_DEBUG("  >UpdateSkyUIText: Failed to get CarryWeightValue."sv);
+			return;
+		}
+		if (carryWeightValue.IsUndefined() || carryWeightValue.IsNull()) {
+			LOG_DEBUG("  >UpdateSkyUIText: CarryWeightValue is undefined or null."sv);
+			return;
+		}
+		RE::GFxValue carryWeightValueX;
+		if (!carryWeightValue.GetMember("_x", &carryWeightValueX)) {
+			LOG_DEBUG("  >UpdateSkyUIText: Failed to get CarryWeightValue._x."sv);
+			return;
+		}
+
+		// CarryWeightLabel
+		RE::GFxValue carryWeightLabel;
+		if (!playerInfoCard.GetMember("CarryWeightLabel", &carryWeightLabel)) {
+			LOG_DEBUG("  >UpdateSkyUIText: Failed to get CarryWeightLabel."sv);
+			return;
+		}
+		if (carryWeightLabel.IsUndefined() || carryWeightLabel.IsNull()) {
+			LOG_DEBUG("  >UpdateSkyUIText: CarryWeightLabel is undefined or null."sv);
+			return;
+		}
+		RE::GFxValue carryWeightLabelX;
+		if (!carryWeightLabel.GetMember("_x", &carryWeightLabelX)) {
+			LOG_DEBUG("  >UpdateSkyUIText: Failed to get CarryWeightLabel._x."sv);
+			return;
+		}
+		if (carryWeightLabelX.IsUndefined() || carryWeightLabelX.IsNull()) {
+			LOG_DEBUG("  >UpdateSkyUIText: CarryWeightLabel._x is undefined or null."sv);
+			return;
+		}
+
+		// VendorGoldValue
+		RE::GFxValue vendorGoldValue;
+		if (!playerInfoCard.GetMember("VendorGoldValue", &vendorGoldValue)) {
+			LOG_DEBUG("  >UpdateSkyUIText: Failed to get VendorGoldValue."sv);
+			return;
+		}
+		if (vendorGoldValue.IsUndefined() || vendorGoldValue.IsNull()) {
+			LOG_DEBUG("  >UpdateSkyUIText: VendorGoldValue is undefined or null."sv);
+			return;
+		}
+		RE::GFxValue vendorGoldValueWidth;
+		if (!vendorGoldValue.GetMember("_width", &vendorGoldValueWidth)) {
+			LOG_DEBUG("  >UpdateSkyUIText: Failed to get VendorGoldValue._x."sv);
+			return;
+		}
+		if (vendorGoldValueWidth.IsUndefined() || vendorGoldValueWidth.IsNull()) {
+			LOG_DEBUG("  >UpdateSkyUIText: VendorGoldValue._x is undefined or null."sv);
+			return;
+		}
+
+		double playerGoldValueXNum = playerGoldValueX.GetNumber();
+		double playerGoldLabelXNum = playerGoldLabelX.GetNumber();
+		double vendorGoldLabelWidthNum = vendorGoldValueWidth.GetNumber();
+		double carryWeightValueXNum = carryWeightValueX.GetNumber();
+		double carryWeightLabelXNum = carryWeightLabelX.GetNumber();
+
+		playerGoldValueXNum -= vendorGoldLabelWidthNum / 2.0 - 10.0;
+		playerGoldLabelXNum -= vendorGoldLabelWidthNum / 2.0 - 10.0;
+		carryWeightValueXNum -= vendorGoldLabelWidthNum / 2.0 - 10.0;
+		carryWeightLabelXNum -= vendorGoldLabelWidthNum / 2.0 - 10.0;
+		playerGoldLabelX.SetNumber(playerGoldLabelXNum);
+		playerGoldValueX.SetNumber(playerGoldValueXNum);
+		carryWeightValueX.SetNumber(carryWeightValueXNum);
+		carryWeightLabelX.SetNumber(carryWeightLabelXNum);
+
+
+		if (!playerGoldLabel.SetMember("_x", playerGoldLabelX)) {
+			LOG_DEBUG("  >UpdateSkyUIText: Failed to set PlayerGoldLabel._x."sv);
+			return;
+		}
+		if (!playerGoldValue.SetMember("_x", playerGoldValueX)) {
+			LOG_DEBUG("  >UpdateSkyUIText: Failed to set PlayerGoldValue._x."sv);
+			return;
+		}
+		if (!playerInfoCard.SetMember("PlayerGoldLabel", playerGoldLabel)) {
+			LOG_DEBUG("  >UpdateSkyUIText: Failed to set PlayerGoldLabel in playerInfoCard."sv);
+			return;
+		}
+		if (!playerInfoCard.SetMember("PlayerGoldValue", playerGoldValue)) {
+			LOG_DEBUG("  >UpdateSkyUIText: Failed to set PlayerGoldValue in playerInfoCard."sv);
+			return;
+		}
+		if (!carryWeightValue.SetMember("_x", carryWeightValueX)) {
+			LOG_DEBUG("  >UpdateSkyUIText: Failed to set CarryWeightValue._x."sv);
+			return;
+		}
+		if (!playerInfoCard.SetMember("CarryWeightValue", carryWeightValue)) {
+			LOG_DEBUG("  >UpdateSkyUIText: Failed to set CarryWeightValue in playerInfoCard."sv);
+			return;
+		}
+		if (!carryWeightLabel.SetMember("_x", carryWeightLabelX)) {
+			LOG_DEBUG("  >UpdateSkyUIText: Failed to set CarryWeightLabel._x."sv);
+			return;
+		}
+		if (!playerInfoCard.SetMember("CarryWeightLabel", carryWeightLabel)) {
+			LOG_DEBUG("  >UpdateSkyUIText: Failed to set CarryWeightLabel in playerInfoCard."sv);
+			return;
+		}
+		
+		LOG_DEBUG("  >UpdateSkyUIText: Updated PlayerGoldLabel and PlayerGoldValue X positions by {}."sv, vendorGoldLabelWidthNum);
+	}
+
+	void CurrencyManager::UpdateVanillaText(RE::GFxValue* a_updateObj)
+	{
+		(void)a_updateObj;
+		// TODO: Implement Vanilla text updates if needed.
 	}
 }

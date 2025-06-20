@@ -72,13 +72,15 @@ namespace Hooks::Barter
 		return _processRejectedDeal(a_message, a_functionName, a_value);
 	}
 
-	inline RE::TESForm* RecalcVendorGoldHook::RecalcVendorGold(const char* a_message,
+	inline bool RecalcVendorGoldHook::RecalcVendorGold(RE::GFxMovieView* a_barterMovie,
 		const char* a_functionName,
-		uint64_t a_value)
+		RE::GFxValue* a_updateObj)
 	{
-		LOG_DEBUG("Hook: RecalcVendorGold"sv);
-		auto* response = _recalcVendorGold(a_message, a_functionName, a_value);
-		CurrencyManager::ResetVendorInfo();
+		LOG_DEBUG("Hook: RecalcVendorGold (GFx): {}"sv, a_functionName);
+		bool response = _recalcVendorGold(a_barterMovie, a_functionName, a_updateObj);
+		if (response) {
+			CurrencyManager::ResetVendorInfo(a_updateObj);
+		}
 		return response;
 	}
 

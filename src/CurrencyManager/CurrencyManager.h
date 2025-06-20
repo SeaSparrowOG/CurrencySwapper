@@ -19,7 +19,7 @@ namespace CurrencyManager
 		std::string& a_out);
 	bool ProcessRejectedDeal();
 
-	void ResetVendorInfo();
+	void ResetVendorInfo(RE::GFxValue* a_updateObj);
 
 	bool SendCustomSaleEvent(RE::TESForm*& a_out);
 	void SendRejectedDealEvent();
@@ -61,12 +61,15 @@ namespace CurrencyManager
 		
 		bool SendRawDealWarning(uint64_t a_value, uint64_t a_merchantGold, std::string& a_out);
 		bool SendNotEnoughGoldWarning();
-		void ResetVendorInfo();
+		void ResetVendorInfo(RE::GFxValue* a_updateObj);
 
 	private:
 		RE::BSEventNotifyControl ProcessEvent(
 			const RE::MenuOpenCloseEvent* a_event,
 			RE::BSTEventSource<RE::MenuOpenCloseEvent>*) override;
+
+		void UpdateSkyUIText(RE::GFxValue* a_updateObj);
+		void UpdateVanillaText(RE::GFxValue* a_updateObj);
 
 		static inline SKSE::RegistrationSet<RE::TESForm*> customRevert{ "OnCurrencyRevert"sv };
 		static inline SKSE::RegistrationSet<RE::TESForm*> customPurchase{ "OnCustomPurchase"sv };

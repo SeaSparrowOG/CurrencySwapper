@@ -54,9 +54,9 @@ namespace Hooks
 
 		struct RecalcVendorGoldHook {
 			inline static bool Install();
-			inline static RE::TESForm* RecalcVendorGold(const char* a_message,
+			inline static bool RecalcVendorGold(RE::GFxMovieView* a_barterMovie,
 				const char* a_functionName,
-				uint64_t a_value);
+				RE::GFxValue* a_updateObj);
 			inline static REL::Relocation<decltype(RecalcVendorGold)> _recalcVendorGold;
 		};
 

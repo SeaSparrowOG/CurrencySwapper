@@ -17,6 +17,7 @@ namespace CurrencyManager
 	bool ProcessRawDeal(uint64_t a_itemValue,
 		uint64_t a_merchantGold,
 		std::string& a_out);
+	bool ProcessTrainingDeal(RE::Actor* a_player, int32_t a_value);
 	bool ProcessRejectedDeal();
 
 	void ResetVendorInfo(RE::GFxValue* a_updateObj);
@@ -24,6 +25,7 @@ namespace CurrencyManager
 	bool SendCustomSaleEvent(RE::TESForm*& a_out);
 	void SendRejectedDealEvent();
 	void SendBarterMenuEvent(RE::TESObjectREFR* a_ref);
+	void SendCustomTrainingMenuEvent(RE::TrainingMenu* a_menu);
 
 	RE::TESForm* GetCurrency();
 	void RevertCurrency();
@@ -48,7 +50,7 @@ namespace CurrencyManager
 		RE::TESForm* GetCurrency();
 
 		// Function replacers
-		void ConstructCustomMenu(RE::TrainingMenu* a_this);
+		void SendCustomTrainingMenuEvent(RE::TrainingMenu* a_this);
 		bool GetPlayerGold(RE::Actor* a_player, int32_t& a_out);
 		bool GetVendorGold(RE::InventoryChanges* a_vendorInventoryChanges, int32_t& a_out);
 		bool GetGoldFromPurchase(RE::InventoryChanges* a_inventoryChanges,
@@ -62,6 +64,8 @@ namespace CurrencyManager
 		bool SendRawDealWarning(uint64_t a_value, uint64_t a_merchantGold, std::string& a_out);
 		bool SendNotEnoughGoldWarning();
 		void ResetVendorInfo(RE::GFxValue* a_updateObj);
+
+		bool ProcessTrainingDeal(RE::Actor* a_player, int32_t a_value);
 
 	private:
 		RE::BSEventNotifyControl ProcessEvent(
@@ -81,6 +85,7 @@ namespace CurrencyManager
 		RE::TESBoundObject* customCurrency{ nullptr };
 
 		RE::FormID barterActorID{ 0 };
+		RE::FormID trainerActorID{ 0 };
 
 		inline static constexpr std::uint32_t Version = 1;
 		inline static constexpr std::uint32_t ID = 'AMSF';

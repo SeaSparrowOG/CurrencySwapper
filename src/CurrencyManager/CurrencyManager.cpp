@@ -37,6 +37,15 @@ namespace CurrencyManager
 		return false;
 	}
 
+	bool ProcessTrainingDeal(RE::Actor* a_player, int32_t a_value)
+	{
+		auto* manager = CurrencyManager::GetSingleton();
+		if (manager) {
+			return manager->ProcessTrainingDeal(a_player, a_value);
+		}
+		return false;
+	}
+
 	bool ProcessRejectedDeal()
 	{
 		auto* manager = CurrencyManager::GetSingleton();
@@ -76,6 +85,17 @@ namespace CurrencyManager
 		auto* manager = CurrencyManager::GetSingleton();
 		if (manager) {
 			manager->SendCustomMenuEvent(a_ref);
+		}
+	}
+
+	void SendCustomTrainingMenuEvent(RE::TrainingMenu* a_menu)
+	{
+		if (!a_menu) {
+			return;
+		}
+		auto* manager = CurrencyManager::GetSingleton();
+		if (manager) {
+			manager->SendCustomTrainingMenuEvent(a_menu);
 		}
 	}
 
@@ -697,5 +717,61 @@ namespace CurrencyManager
 	{
 		(void)a_updateObj;
 		// TODO: Implement Vanilla text updates if needed.
+	}
+
+	void CurrencyManager::SendCustomTrainingMenuEvent(RE::TrainingMenu* a_menu)
+	{
+		if (!customCurrency) {
+			return;
+		}
+
+		auto& trainingMenuObj = a_menu->trainingMenuObj;
+		if (trainingMenuObj.IsUndefined() || trainingMenuObj.IsNull()) {
+			return;
+		}
+
+		RE::GFxValue trainingCard;
+		if (!trainingMenuObj.GetMember("TrainingCard", &trainingCard)) {
+			return;
+		}
+
+		bool managedReplacement = false;
+		int i = 6;
+		trainingCard.VisitMembers([&](const char* a_name, RE::GFxValue a_value) {
+			if (i == 0) {
+				a_value.SetMember("textAutoSize", { "shrink" });
+				RE::GFxValue verticalHeight;
+				if (a_value.GetMember("_y", &verticalHeight)) {
+					const auto height = verticalHeight.GetNumber();
+					const auto diff = height - 18.0f;
+					a_value.SetMember("_y", { diff });
+				}
+				a_value.SetText(customCurrency->GetName());
+				trainingCard.SetMember(a_name, a_value);
+				managedReplacement = true;
+			}
+			--i;
+			});
+		if (!managedReplacement) {
+			return;
+		}
+
+		auto& currentGold = a_menu->currentGold;
+		const auto currencyCount = RE::PlayerCharacter::GetSingleton()->GetItemCount(customCurrency);
+		const auto currencyCountStr = std::to_string(currencyCount);
+		currentGold.SetText(currencyCountStr.c_str());
+	}
+
+	bool CurrencyManager::ProcessTrainingDeal(RE::Actor* a_player, int32_t a_value)
+	{
+		if (!customCurrency) {
+			return false;
+		}
+		auto* trainer = RE::TESForm::LookupByID<RE::Actor>(trainerActorID);
+		if (!trainer || !a_player) {
+			return false;
+		}
+		a_player->RemoveItem(customCurrency, a_value, RE::ITEM_REMOVE_REASON::kStoreInContainer, nullptr, trainer);
+		return true;
 	}
 }

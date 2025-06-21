@@ -65,35 +65,6 @@ if(DEFINED ENV{SKYRIM_MODS_FOLDER} AND IS_DIRECTORY "$ENV{SKYRIM_MODS_FOLDER}")
 	endif()
 endif()
 
-# ---- Compile Papyrus Scripts and Pack Into Archive ----
-include(Papyrus)
-include(BSArchive)
-
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/Data/Source/Scripts")
-	file(GLOB ${PROJECT_NAME}_SOURCES
-		LIST_DIRECTORIES false
-		CONFIGURE_DEPENDS
-		"Data/Source/Scripts/*.psc"
-	)
-
-	Papyrus_Add(
-		"Papyrus"
-		GAME ${Skyrim64Path}
-		IMPORTS ${CMAKE_CURRENT_SOURCE_DIR}/Data/Source/Scripts
-		SOURCES ${${PROJECT_NAME}_SOURCES}
-		OPTIMIZE ANONYMIZE
-	)
-
-	BSArchive_Add(
-		"BSA"
-		OUTPUT "${PROJECT_NAME}.bsa"
-		FORMAT SSE
-		FILES ${Papyrus_OUTPUT}
-	)
-else()
-	message(STATUS "No scripts to compile found, won't compress into BSA.")
-endif()
-
 # ---- Automatically copy artifacts to MO2 ----
 if(DEFINED OUTPUT_FOLDER)
     set(DLL_FOLDER "${OUTPUT_FOLDER}/SKSE/Plugins")
@@ -103,15 +74,5 @@ if(DEFINED OUTPUT_FOLDER)
         POST_BUILD
         COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:${PROJECT_NAME}>" "${DLL_FOLDER}/$<TARGET_FILE_NAME:${PROJECT_NAME}>"
         COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_PDB_FILE:${PROJECT_NAME}>" "${DLL_FOLDER}/$<TARGET_PDB_FILE_NAME:${PROJECT_NAME}>"
-    )
-	add_custom_command(
-        TARGET "${PROJECT_NAME}"
-        POST_BUILD
-        COMMAND "${CMAKE_COMMAND}"
-            -DSOURCE_SCRIPTS="${PROJECT_SOURCE_DIR}/Data/Source/Scripts"
-            -DCOMPILED_SCRIPTS="${CMAKE_BINARY_DIR}/Scripts"
-            -DOUTPUT_FOLDER="${OUTPUT_FOLDER}"
-            -P "${PROJECT_SOURCE_DIR}/CMake/Scripts/CMake-Copy-Scripts.cmake"
-        VERBATIM
     )
 endif()

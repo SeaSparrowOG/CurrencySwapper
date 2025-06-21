@@ -16,3 +16,24 @@ subs:
         type: string
         required: true
         help: The EditorID of the currency to swap to.
+  - name: settrainingoverrides
+    alias: sto
+    func: SetTrainingOverridesConsole
+    help: Sets training overrides.
+    args:
+      - name: allowmultiplier
+        type: string
+        required: true
+        help: Read the docs.
+      - name: multiplier
+        type: string
+        required: true
+        help: Read the docs.
+      - name: allowbase
+        type: string
+        required: true
+        help: Read the docs.
+      - name: base
+        type: string
+        required: true
+        help: Read the docs.

@@ -103,17 +103,8 @@ if(DEFINED OUTPUT_FOLDER)
         POST_BUILD
         COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:${PROJECT_NAME}>" "${DLL_FOLDER}/$<TARGET_FILE_NAME:${PROJECT_NAME}>"
         COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_PDB_FILE:${PROJECT_NAME}>" "${DLL_FOLDER}/$<TARGET_PDB_FILE_NAME:${PROJECT_NAME}>"
-
-		COMMAND "${CMAKE_COMMAND}"
-			-DSRC_DIR="${PROJECT_SOURCE_DIR}/Data"
-			-DDST_DIR="${OUTPUT_FOLDER}"
-			-DPROJECT_NAME="${PROJECT_NAME}"
-			-P "${PROJECT_SOURCE_DIR}/CMake/Scripts/CMake-Copy-Artifacts.cmake"
     )
-
-	# Loose scripts for non-release builds (why? Because I said so smile)
-    if(NOT FULL_RELEASE)
-        add_custom_command(
+	add_custom_command(
         TARGET "${PROJECT_NAME}"
         POST_BUILD
         COMMAND "${CMAKE_COMMAND}"
@@ -123,5 +114,4 @@ if(DEFINED OUTPUT_FOLDER)
             -P "${PROJECT_SOURCE_DIR}/CMake/Scripts/CMake-Copy-Scripts.cmake"
         VERBATIM
     )
-    endif()
 endif()

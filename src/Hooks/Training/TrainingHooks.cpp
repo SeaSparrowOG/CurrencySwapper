@@ -22,10 +22,21 @@ namespace Hooks::Training
 	}
 
 	inline float CalculateTrainingCostHook::CalculateTrainingCost(uint32_t a_skillLevel) {
-		LOG_DEBUG("Training: Called CalculateTrainingCost with skill level: {}"sv, a_skillLevel);
-		auto response = _calculateTrainingCost(a_skillLevel);
-		LOG_DEBUG("  >Calculated training cost: {}"sv, response);
-		return response;
+		float out = 0;
+		float skillLevel = static_cast<float>(a_skillLevel); //Remove compiler warning about implicit conversion, game already does this.
+		if (!CurrencyManager::RequestTrainingCost(skillLevel, out)) {
+			return _calculateTrainingCost(a_skillLevel);
+		}
+		return out;
+	}
+
+	inline float CalculateTrainingCostHook::CalculateTrainingCostTextUpdate(uint32_t a_skillLevel) {
+		float out = 0;
+		float skillLevel = static_cast<float>(a_skillLevel); //Remove compiler warning about implicit conversion, game already does this.
+		if (!CurrencyManager::RequestTrainingCost(skillLevel, out)) {
+			return _calculateTrainingCostTextUpdate(a_skillLevel);
+		}
+		return out;
 	}
 
 	inline void RemovePlayerGoldHook::RemovePlayerGold(RE::PlayerCharacter* a_this, void* a2, int32_t a_amount) {
@@ -59,9 +70,7 @@ namespace Hooks::Training
 			auto inventoryCounts = a_player->GetInventoryCounts();
 			return inventoryCounts.contains(bound) ? inventoryCounts.at(bound) : 0;
 		}
-		else {
-			_updateTrainingCurrency(a_player);
-		}
+		return _updateTrainingCurrency(a_player);
 	}
 
 	/*
@@ -126,6 +135,15 @@ namespace Hooks::Training
 		}
 		auto& trampoline = SKSE::GetTrampoline();
 		_calculateTrainingCost = trampoline.write_call<5>(target.address(), &CalculateTrainingCost);
+
+		// Also install the text update hook
+		logger::info("  >Installing the Calculate Training Cost Text Update hook..."sv);
+		REL::Relocation<std::uintptr_t> textUpdateTarget{ REL::ID(52668), 0x291 };
+		if (!REL::make_pattern<"E8">().match(textUpdateTarget.address())) {
+			logger::critical("    >Failed to validate the hook pattern for text update."sv);
+			return false;
+		}
+		_calculateTrainingCostTextUpdate = trampoline.write_call<5>(textUpdateTarget.address(), &CalculateTrainingCostTextUpdate);
 		return true;
 	}
 

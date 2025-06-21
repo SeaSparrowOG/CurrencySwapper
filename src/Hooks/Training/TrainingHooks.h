@@ -4,7 +4,7 @@ namespace Hooks
 {
 	namespace Training
 	{
-		inline static constexpr size_t allocSize = 6u * 14u;
+		inline static constexpr size_t allocSize = 7u * 14u;
 		bool Install();
 
 		struct SetupTrainingMenuHook {
@@ -22,7 +22,9 @@ namespace Hooks
 		struct CalculateTrainingCostHook {
 			inline static bool Install();
 			inline static float CalculateTrainingCost(uint32_t a_skillLevel);
+			inline static float CalculateTrainingCostTextUpdate(uint32_t a_skillLevel);
 			inline static REL::Relocation<decltype(CalculateTrainingCost)> _calculateTrainingCost;
+			inline static REL::Relocation<decltype(CalculateTrainingCostTextUpdate)> _calculateTrainingCostTextUpdate;
 		};
 
 		struct RemovePlayerGoldHook {

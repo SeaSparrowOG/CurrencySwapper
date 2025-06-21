@@ -124,6 +124,15 @@ namespace CurrencyManager
 		return false;
 	}
 
+	bool RequestTrainingCost(float a_SkillLevel, float& a_out)
+	{
+		auto* manager = CurrencyManager::GetSingleton();
+		if (manager) {
+			return manager->RequestTrainingCost(a_SkillLevel, a_out);
+		}
+		return false;
+	}
+
 	void RegisterFormForEvents(RE::TESForm* a_form)
 	{
 		auto* manager = CurrencyManager::GetSingleton();
@@ -137,6 +146,13 @@ namespace CurrencyManager
 		auto* manager = CurrencyManager::GetSingleton();
 		if (manager) {
 			manager->ResetVendorInfo(a_updateObj);
+		}
+	}
+
+	void SetTrainingOverrides(bool a_overrideMult, float a_multiplier, bool a_overrideBase, float a_base) {
+		auto* manager = CurrencyManager::GetSingleton();
+		if (manager) {
+			manager->SetTrainingOverrides(a_overrideMult, a_multiplier, a_overrideBase, a_base);
 		}
 	}
 }
@@ -194,6 +210,23 @@ namespace CurrencyManager
 			logger::error("  >Failed to write currency ID: {}"sv, currencyID);
 			return false;
 		}
+
+		if (!a_intfc->WriteRecordData(overrideTrainingCostBase)) {
+			logger::error("  >Failed to write overrideTrainingCostBase."sv);
+			return false;
+		}
+		if (!a_intfc->WriteRecordData(trainingCostBaseOverride)) {
+			logger::error("  >Failed to write trainingCostBaseOverride."sv);
+			return false;
+		}
+		if (!a_intfc->WriteRecordData(overrideTrainingCostMultiplier)) {
+			logger::error("  >Failed to write overrideTrainingCostMultiplier."sv);
+			return false;
+		}
+		if (!a_intfc->WriteRecordData(trainingCostMultiplierOverride)) {
+			logger::error("  >Failed to write trainingCostMultiplierOverride."sv);
+			return false;
+		}
 		return true;
 	}
 
@@ -233,6 +266,23 @@ namespace CurrencyManager
 					return false;
 				}
 				customCurrency = RE::TESForm::LookupByID<RE::TESBoundObject>(newID);
+
+				if (!a_intfc->ReadRecordData(overrideTrainingCostBase)) {
+					logger::error("  >Failed to read overrideTrainingCostBase."sv);
+					return false;
+				}
+				if (!a_intfc->ReadRecordData(trainingCostBaseOverride)) {
+					logger::error("  >Failed to read trainingCostBaseOverride."sv);
+					return false;
+				}
+				if (!a_intfc->ReadRecordData(overrideTrainingCostMultiplier)) {
+					logger::error("  >Failed to read overrideTrainingCostMultiplier."sv);
+					return false;
+				}
+				if (!a_intfc->ReadRecordData(trainingCostMultiplierOverride)) {
+					logger::error("  >Failed to read trainingCostMultiplierOverride."sv);
+					return false;
+				}
 			}
 			else {
 				logger::error("Unsupported version {} for type {}"sv, version, type);
@@ -246,6 +296,10 @@ namespace CurrencyManager
 	void CurrencyManager::Revert(SKSE::SerializationInterface* a_intfc) {
 		(void)a_intfc;
 		customCurrency = nullptr;
+		overrideTrainingCostBase = false;
+		overrideTrainingCostMultiplier = false;
+		trainingCostBaseOverride = 0.0f;
+		trainingCostMultiplierOverride = 0.0f;
 	}
 
 
@@ -263,6 +317,11 @@ namespace CurrencyManager
 		auto* oldCurrency = customCurrency ? skyrim_cast<RE::TESForm*>(customCurrency) : nullptr;
 		customCurrency = nullptr;
 		customRevert.QueueEvent(oldCurrency);
+
+		overrideTrainingCostBase = false;
+		overrideTrainingCostMultiplier = false;
+		trainingCostBaseOverride = 0.0f;
+		trainingCostMultiplierOverride = 0.0f;
 	}
 
 	bool CurrencyManager::SetCurrency(RE::TESForm* a_newCurrency) {
@@ -272,10 +331,36 @@ namespace CurrencyManager
 			return false;
 		}
 
+		overrideTrainingCostBase = false;
+		overrideTrainingCostMultiplier = false;
+		trainingCostBaseOverride = 0.0f;
+		trainingCostMultiplierOverride = 0.0f;
+
 		auto* old = customCurrency ? skyrim_cast<RE::TESForm*>(customCurrency) : nullptr;
 		customCurrency = bound;
 		currencySwap.QueueEvent(old, customCurrency);
 		return true;
+	}
+
+	void CurrencyManager::SetTrainingOverrides(bool a_overrideMult, float a_multiplier, bool a_overrideBase, float a_base)
+	{
+		if (a_overrideMult) {
+			overrideTrainingCostMultiplier = true;
+			trainingCostMultiplierOverride = a_multiplier;
+		}
+		else {
+			overrideTrainingCostMultiplier = false;
+			trainingCostMultiplierOverride = 0.0f;
+		}
+
+		if (a_overrideBase) {
+			overrideTrainingCostBase = true;
+			trainingCostBaseOverride = a_base;
+		}
+		else {
+			overrideTrainingCostBase = false;
+			trainingCostBaseOverride = 0.0f;
+		}
 	}
 
 	void CurrencyManager::RegisterFormForAllEvents(RE::TESForm* a_form) {
@@ -779,6 +864,79 @@ namespace CurrencyManager
 		}
 		a_player->RemoveItem(customCurrency, a_value, RE::ITEM_REMOVE_REASON::kRemove, nullptr, nullptr);
 		trainer->AddObjectToContainer(customCurrency, nullptr, a_value, nullptr);
+		return true;
+	}
+
+	bool CurrencyManager::RequestTrainingCost(float a_SkillLevel, float& a_out)
+	{
+		if (!customCurrency) {
+			return false;
+		}
+		if (!overrideTrainingCostBase && !overrideTrainingCostMultiplier) {
+			return false;
+		}
+
+		auto* gameSettings = RE::GameSettingCollection::GetSingleton();
+		if (!gameSettings) {
+			return false;
+		}
+		auto* baseCostMult = gameSettings->GetSetting("fTrainingBaseCost");
+		auto* multiplier = gameSettings->GetSetting("fTrainingMultCost");
+		if (!baseCostMult || !multiplier) {
+			return false;
+		}
+
+		auto* journeymanCost = gameSettings->GetSetting("iTrainingJourneymanCost");
+		auto* expertCost = gameSettings->GetSetting("iTrainingExpertCost");
+		auto* masterCost = gameSettings->GetSetting("iTrainingMasterCost");
+		auto* journeymanSkill = gameSettings->GetSetting("iTrainingJourneymanSkill");
+		auto* expertSkill = gameSettings->GetSetting("iTrainingExpertSkill");
+		auto* masterSkill = gameSettings->GetSetting("iTrainingMasterSkill");
+		if (!journeymanCost || !expertCost || !masterCost || !journeymanSkill || !expertSkill || !masterSkill) {
+			return false;
+		}
+		LOG_DEBUG("  >Requesting training cost for skill level: {}"sv, a_SkillLevel);
+		LOG_DEBUG("    >Journeyman Cost: {}, Journeyman Skill: {}"sv,
+			journeymanCost->GetSInt(), journeymanSkill->GetSInt());
+		LOG_DEBUG("    >Expert Cost: {}, Expert Skill: {}"sv,
+			expertCost->GetSInt(), expertSkill->GetSInt());
+		LOG_DEBUG("    >Master Cost: {}, Master Skill: {}"sv,
+			masterCost->GetSInt(), masterSkill->GetSInt());
+
+		float base = 0.0f;
+		if (overrideTrainingCostBase) {
+			base = trainingCostBaseOverride;
+		}
+		else {
+			if (a_SkillLevel < journeymanSkill->GetSInt()) {
+				base = journeymanCost->GetSInt();
+			}
+			else if (a_SkillLevel < expertSkill->GetSInt()) {
+				base = expertCost->GetSInt();
+			}
+			else {
+				base = masterCost->GetSInt();
+			}
+		}
+
+		float multiplierValue = 0.0f;
+		if (overrideTrainingCostMultiplier) {
+			multiplierValue = trainingCostMultiplierOverride;
+		}
+		else {
+			multiplierValue = multiplier->GetFloat();
+		}
+		LOG_DEBUG("  >Training cost base: {}, multiplier: {}"sv, base, multiplierValue);
+
+		float result = base + (a_SkillLevel * multiplierValue);
+		if (!std::isfinite(result)) {
+			return false;
+		}
+		result = ceil(result);
+		if (result < 0.0f) {
+			result = 0.0f;
+		}
+		a_out = result;
 		return true;
 	}
 }

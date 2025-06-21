@@ -30,7 +30,10 @@ namespace CurrencyManager
 	RE::TESForm* GetCurrency();
 	void RevertCurrency();
 	void RegisterFormForEvents(RE::TESForm* a_form);
+	void SetTrainingOverrides(bool a_overrideMult, float a_multiplier, bool a_overrideBase, float a_base);
 	bool SetCurrency(RE::TESForm* a_currency);
+
+	bool RequestTrainingCost(float a_SkillLevel, float& a_out);
 
 	class CurrencyManager : 
 		public REX::Singleton<CurrencyManager>,
@@ -45,6 +48,7 @@ namespace CurrencyManager
 
 		void         RevertCurrency();
 		bool         SetCurrency(RE::TESForm* a_newCurrency);
+		void         SetTrainingOverrides(bool a_overrideMult, float a_multiplier, bool a_overrideBase, float a_base);
 		void         RegisterFormForAllEvents(RE::TESForm* a_form);
 		void         UnRegisterFormForAllEvents(RE::TESForm* a_form);
 		RE::TESForm* GetCurrency();
@@ -67,6 +71,8 @@ namespace CurrencyManager
 
 		bool ProcessTrainingDeal(RE::Actor* a_player, int32_t a_value);
 
+		bool RequestTrainingCost(float a_SkillLevel, float& a_out);
+
 	private:
 		RE::BSEventNotifyControl ProcessEvent(
 			const RE::MenuOpenCloseEvent* a_event,
@@ -87,7 +93,12 @@ namespace CurrencyManager
 		RE::FormID barterActorID{ 0 };
 		RE::FormID trainerActorID{ 0 };
 
-		inline static constexpr std::uint32_t Version = 1;
+		float trainingCostMultiplierOverride{ 0.0f };
+		bool overrideTrainingCostMultiplier{ false };
+		float trainingCostBaseOverride{ 0.0f };
+		bool overrideTrainingCostBase{ false };
+
+		inline static constexpr std::uint32_t Version = 2;
 		inline static constexpr std::uint32_t ID = 'AMSF';
 		inline static constexpr std::uint32_t StoredCurrency = 'STCU';
 	};

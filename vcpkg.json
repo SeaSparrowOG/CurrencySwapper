@@ -11,5 +11,11 @@
     "spdlog",
     "xbyak"
   ],
-  "builtin-baseline": "f4ea42fa5c2b993cf2b75725331616999e2e34d1"
+  "builtin-baseline": "f4ea42fa5c2b993cf2b75725331616999e2e34d1",
+  "overrides": [
+    {
+      "name": "xbyak",
+      "version": "7.23.1"
+    }
+  ]
 }

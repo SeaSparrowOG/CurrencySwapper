@@ -59,6 +59,10 @@ namespace Papyrus {
 		}
 	}
 
+	void ReloadINISettings(STATIC_ARGS) {
+		CurrencyManager::ReloadIniSettings();
+	}
+
 	bool Bind(VM& a_vm)
 	{
 		BIND(ResetCurrency);
@@ -68,6 +72,7 @@ namespace Papyrus {
 		BIND(RegisterFormForAllEvents);
 		BIND(SetTrainingOverrides);
 		BIND(SetTrainingOverridesConsole);
+		BIND(ReloadINISettings);
 		return true;
 	}
 

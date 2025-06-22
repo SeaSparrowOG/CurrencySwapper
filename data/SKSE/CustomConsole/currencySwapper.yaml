@@ -3,6 +3,10 @@ alias: crs
 script: SEA_BarterFunctions
 help: Currency Swapper
 subs:
+  - name: reloadinisettings
+    alias: ris
+    func: ReloadINISettings
+    help: Reloads all ini settings in memory.
   - name: revertcurrency
     alias: rc
     func: ResetCurrency

@@ -35,6 +35,8 @@ namespace CurrencyManager
 
 	bool RequestTrainingCost(float a_SkillLevel, float& a_out);
 
+	void ReloadIniSettings();
+
 	class CurrencyManager : 
 		public REX::Singleton<CurrencyManager>,
 		public RE::BSTEventSink<RE::MenuOpenCloseEvent>
@@ -73,6 +75,8 @@ namespace CurrencyManager
 
 		bool RequestTrainingCost(float a_SkillLevel, float& a_out);
 
+		void ReloadINISettings();
+
 	private:
 		RE::BSEventNotifyControl ProcessEvent(
 			const RE::MenuOpenCloseEvent* a_event,
@@ -97,6 +101,8 @@ namespace CurrencyManager
 		bool overrideTrainingCostMultiplier{ false };
 		float trainingCostBaseOverride{ 0.0f };
 		bool overrideTrainingCostBase{ false };
+
+		float trainingLabelOffsety{ 0.0f };
 
 		inline static constexpr std::uint32_t Version = 2;
 		inline static constexpr std::uint32_t ID = 'AMSF';

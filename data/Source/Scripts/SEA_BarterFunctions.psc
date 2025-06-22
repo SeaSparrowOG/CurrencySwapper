@@ -9,6 +9,8 @@ Form Function GetCurrency() Global Native
 Function SetTrainingOverrides(bool a_bOverrideMultiplier, Float a_bMultOverride, Bool a_bOverrideBase, Float a_bBaseOverride) Global Native
 Function SetTrainingOverridesConsole(String a_sOverrideMultiplier, String a_sMultOverride, String a_sOverrideBase, String a_sBaseOverride) Global Native
 
+Function ReloadINISettings() Global Native
+
 ;/
 Events
 /;

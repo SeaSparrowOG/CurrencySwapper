@@ -1,6 +1,7 @@
 #include "CurrencyManager.h"
 
 #include "RE/Misc.h"
+#include "Settings/INI/INISettings.h"
 
 namespace CurrencyManager
 {
@@ -131,6 +132,13 @@ namespace CurrencyManager
 			return manager->RequestTrainingCost(a_SkillLevel, a_out);
 		}
 		return false;
+	}
+
+	void ReloadIniSettings() {
+		auto* manager = CurrencyManager::GetSingleton();
+		if (manager) {
+			manager->ReloadINISettings();
+		}
 	}
 
 	void RegisterFormForEvents(RE::TESForm* a_form)
@@ -309,6 +317,19 @@ namespace CurrencyManager
 			logger::critical("  >Failed to get the game's source event holder."sv);
 			return false;
 		}
+
+		auto* settingsHolder = Settings::INI::Holder::GetSingleton();
+		if (!settingsHolder) {
+			logger::critical("  >Failed to get the settings holder."sv);
+			return false;
+		}
+
+		auto yLabelOffsetRaw = settingsHolder->GetStoredSetting<float>(Settings::INI::TRAINING_MENU_LABEL_OFFSET_Y);
+		trainingLabelOffsety = yLabelOffsetRaw.has_value() ? yLabelOffsetRaw.value() : -18.0f;
+		if (!yLabelOffsetRaw.has_value()) {
+			logger::warn("  >Failed to retrieve training label offset from settings, using default value: {}"sv, trainingLabelOffsety);
+		}
+
 		sourceEventHolder->AddEventSink(this);
 		return true;
 	}
@@ -828,7 +849,7 @@ namespace CurrencyManager
 				RE::GFxValue verticalHeight;
 				if (a_value.GetMember("_y", &verticalHeight)) {
 					const auto height = verticalHeight.GetNumber();
-					const auto diff = height - 18.0f;
+					const auto diff = height - trainingLabelOffsety;
 					a_value.SetMember("_y", { diff });
 				}
 				a_value.SetText(customCurrency->GetName());
@@ -938,5 +959,22 @@ namespace CurrencyManager
 		}
 		a_out = result;
 		return true;
+	}
+
+	void CurrencyManager::ReloadINISettings() {
+		auto* settingsHolder = Settings::INI::Holder::GetSingleton();
+		if (!settingsHolder) {
+			logger::warn("  >Failed to retrieve settings holder for INI reload."sv);
+			return;
+		}
+		settingsHolder->Reload();
+		auto yLabelOffsetRaw = settingsHolder->GetStoredSetting<float>(Settings::INI::TRAINING_MENU_LABEL_OFFSET_Y);
+		if (yLabelOffsetRaw.has_value()) {
+			trainingLabelOffsety = yLabelOffsetRaw.value();
+			logger::info("  >Training label offset updated to: {}"sv, trainingLabelOffsety);
+		}
+		else {
+			logger::warn("  >Failed to retrieve training label offset from settings, using default value: {}"sv, trainingLabelOffsety);
+		}
 	}
 }

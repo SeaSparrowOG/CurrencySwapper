@@ -2,6 +2,7 @@
 #include "Hooks/Hooks.h"
 #include "Papyrus/Papyrus.h"
 #include "Serialization/Serde.h"
+#include "Settings/INI/INISettings.h"
 
 #ifdef SKYRIM_AE
 extern "C" DLLEXPORT constinit auto SKSEPlugin_Version = []()
@@ -83,10 +84,12 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface * a_
 
 	logger::info("Performing startup tasks..."sv);
 
+	if (!Settings::INI::Read()) {
+		SKSE::stl::report_and_fail("Failed to load INI settings. Check the log for details."sv);
+	}
 	if (!Hooks::Install()) {
 		SKSE::stl::report_and_fail("Failed to install hooks. Check the log for more information."sv);
 	}
-
 	if (!CurrencyManager::Initialize()) {
 		SKSE::stl::report_and_fail("Failed to install Currency Manager. Check the log for details."sv);
 	}

@@ -102,6 +102,9 @@ namespace CurrencyManager
 		float trainingCostBaseOverride{ 0.0f };
 		bool overrideTrainingCostBase{ false };
 
+		std::string playerLabelOverride{ "" };
+		std::string vendorLabelOverride{ "" };
+
 		float trainingLabelOffsety{ 0.0f };
 
 		inline static constexpr std::uint32_t Version = 2;

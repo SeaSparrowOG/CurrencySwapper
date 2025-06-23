@@ -330,6 +330,24 @@ namespace CurrencyManager
 			logger::warn("  >Failed to retrieve training label offset from settings, using default value: {}"sv, trainingLabelOffsety);
 		}
 
+		auto vendorLabelOverrideRaw = settingsHolder->GetStoredSetting<std::string>(Settings::INI::BARTER_MENU_VENDOR_LABEL_OVERWRITE);
+		auto playerLabelOverrideRaw = settingsHolder->GetStoredSetting<std::string>(Settings::INI::BARTER_MENU_PLAYER_LABEL_OVERWRITE);
+
+		playerLabelOverride = playerLabelOverrideRaw.has_value() ? playerLabelOverrideRaw.value() : "";
+		vendorLabelOverride = vendorLabelOverrideRaw.has_value() ? vendorLabelOverrideRaw.value() : "";
+		if (playerLabelOverride == "DEFAULT" || vendorLabelOverride == "DEFAULT") {
+			playerLabelOverride = "";
+			vendorLabelOverride = "";
+
+			if ((playerLabelOverride != "DEFAULT" || vendorLabelOverride != "DEFAULT")) {
+				logger::warn("  >Note that both player and vendor values must be non-empty for the settings to take effect."sv);
+			}
+		}
+		else {
+			logger::info("  >Overrode default paths with:"sv);
+			logger::info("    Player Label: {}"sv, playerLabelOverride);
+			logger::info("    Vendor Label: {}"sv, vendorLabelOverride);
+		}
 		sourceEventHolder->AddEventSink(this);
 		return true;
 	}
@@ -502,6 +520,7 @@ namespace CurrencyManager
 
 	void CurrencyManager::ResetVendorInfo(RE::GFxValue* a_updateObj)
 	{
+
 		if (!customCurrency) {
 			return;
 		}
@@ -593,7 +612,20 @@ namespace CurrencyManager
 		std::string currencyName = customCurrency->GetName();
 		bool useSkyUIPaths = dh->LookupLoadedModByName("SkyUI_SE.esp"sv);
 		RE::GFxValue var;
-		if (useSkyUIPaths) {
+
+		if (!playerLabelOverride.empty() && !vendorLabelOverride.empty()) {
+			menu->GetVariable(&var, playerLabelOverride.c_str());
+			if (var.IsUndefined()) {
+				return Control::kContinue;
+			}
+			var.SetText(currencyName.c_str());
+
+			menu->GetVariable(&var, vendorLabelOverride.c_str());
+			if (var.IsUndefined()) {
+				return Control::kContinue;
+			}
+		}
+		else if (useSkyUIPaths) {
 			menu->GetVariable(&var, pathToPlayerLabel_SkyUI);
 			if (var.IsUndefined()) {
 				return Control::kContinue;
@@ -637,6 +669,7 @@ namespace CurrencyManager
 	}
 
 	void CurrencyManager::UpdateSkyUIText(RE::GFxValue* a_updateObj) {
+		(void)a_updateObj;
 		auto* ui = RE::UI::GetSingleton();
 		auto barterMenu = ui ? ui->GetMenu<RE::BarterMenu>() : nullptr;
 		if (!barterMenu) {
@@ -930,13 +963,13 @@ namespace CurrencyManager
 		}
 		else {
 			if (a_SkillLevel < journeymanSkill->GetSInt()) {
-				base = journeymanCost->GetSInt();
+				base = static_cast<float>(journeymanCost->GetSInt());
 			}
 			else if (a_SkillLevel < expertSkill->GetSInt()) {
-				base = expertCost->GetSInt();
+				base = static_cast<float>(expertCost->GetSInt());
 			}
 			else {
-				base = masterCost->GetSInt();
+				base = static_cast<float>(masterCost->GetSInt());
 			}
 		}
 

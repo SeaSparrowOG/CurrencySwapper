@@ -48,5 +48,7 @@ namespace Settings
 		};
 
 		inline static constexpr const char* TRAINING_MENU_LABEL_OFFSET_Y = "TrainingMenu|fTrainingMenuLabelOffsetY";
+		inline static constexpr const char* BARTER_MENU_VENDOR_LABEL_OVERWRITE = "BarterMenu|sVendorLabelOverride";
+		inline static constexpr const char* BARTER_MENU_PLAYER_LABEL_OVERWRITE = "BarterMenu|sPlayerLabelOverride";
 	}
 }

@@ -95,6 +95,7 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface * a_
 	}
 	SKSE::GetPapyrusInterface()->Register(Papyrus::RegisterFunctions);
 
+	SECTION_SEPARATOR;
 	logger::info("Setting up serialization system..."sv);
 	const auto serialization = SKSE::GetSerializationInterface();
 	serialization->SetUniqueID(Serialization::ID);
@@ -102,6 +103,7 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface * a_
 	serialization->SetLoadCallback(&Serialization::LoadCallback);
 	serialization->SetRevertCallback(&Serialization::RevertCallback);
 	logger::info("  >Registered necessary functions."sv);
+	SECTION_SEPARATOR;
 
 	return true;
 }

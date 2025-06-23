@@ -36,9 +36,11 @@ namespace Settings::INI
 		logger::info("==========================================================");
 		logger::info("Reading and validating INI settings from {}.ini"sv, Plugin::NAME);
 
-		static constexpr uint64_t expectedSettingSize = 1;
+		static constexpr uint64_t expectedSettingSize = 3;
 		std::array<std::string, expectedSettingSize> expectedSettings = {
-			TRAINING_MENU_LABEL_OFFSET_Y
+			TRAINING_MENU_LABEL_OFFSET_Y,
+			BARTER_MENU_PLAYER_LABEL_OVERWRITE,
+			BARTER_MENU_VENDOR_LABEL_OVERWRITE
 		};
 
 		try {

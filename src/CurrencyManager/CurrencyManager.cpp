@@ -333,15 +333,11 @@ namespace CurrencyManager
 		auto vendorLabelOverrideRaw = settingsHolder->GetStoredSetting<std::string>(Settings::INI::BARTER_MENU_VENDOR_LABEL_OVERWRITE);
 		auto playerLabelOverrideRaw = settingsHolder->GetStoredSetting<std::string>(Settings::INI::BARTER_MENU_PLAYER_LABEL_OVERWRITE);
 
-		playerLabelOverride = playerLabelOverrideRaw.has_value() ? playerLabelOverrideRaw.value() : "";
-		vendorLabelOverride = vendorLabelOverrideRaw.has_value() ? vendorLabelOverrideRaw.value() : "";
+		playerLabelOverride = playerLabelOverrideRaw.has_value() ? playerLabelOverrideRaw.value() : "DEFAULT";
+		vendorLabelOverride = vendorLabelOverrideRaw.has_value() ? vendorLabelOverrideRaw.value() : "DEFAULT";
 		if (playerLabelOverride == "DEFAULT" || vendorLabelOverride == "DEFAULT") {
 			playerLabelOverride = "";
 			vendorLabelOverride = "";
-
-			if ((playerLabelOverride != "DEFAULT" || vendorLabelOverride != "DEFAULT")) {
-				logger::warn("  >Note that both player and vendor values must be non-empty for the settings to take effect."sv);
-			}
 		}
 		else {
 			logger::info("  >Overrode default paths with:"sv);
@@ -1008,6 +1004,20 @@ namespace CurrencyManager
 		}
 		else {
 			logger::warn("  >Failed to retrieve training label offset from settings, using default value: {}"sv, trainingLabelOffsety);
+		}
+
+		auto vendorLabelOverrideRaw = settingsHolder->GetStoredSetting<std::string>(Settings::INI::BARTER_MENU_VENDOR_LABEL_OVERWRITE);
+		auto playerLabelOverrideRaw = settingsHolder->GetStoredSetting<std::string>(Settings::INI::BARTER_MENU_PLAYER_LABEL_OVERWRITE);
+		playerLabelOverride = playerLabelOverrideRaw.has_value() ? playerLabelOverrideRaw.value() : "DEFAULT";
+		vendorLabelOverride = vendorLabelOverrideRaw.has_value() ? vendorLabelOverrideRaw.value() : "DEFAULT";
+		if (playerLabelOverride == "DEFAULT" || vendorLabelOverride == "DEFAULT") {
+			playerLabelOverride = "";
+			vendorLabelOverride = "";
+		}
+		else {
+			logger::info("  >Overrode default paths with:"sv);
+			logger::info("    Player Label: {}"sv, playerLabelOverride);
+			logger::info("    Vendor Label: {}"sv, vendorLabelOverride);
 		}
 	}
 }

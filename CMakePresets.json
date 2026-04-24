@@ -54,7 +54,8 @@
       "hidden": true,
       "binaryDir": "${sourceDir}/build-github",
       "cacheVariables": {
-        "FULL_RELEASE": true
+        "FULL_RELEASE": true,
+        "GITHUB":  true
       }
     },
     {

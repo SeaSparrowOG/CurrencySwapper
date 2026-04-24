@@ -36,9 +36,23 @@
       "generator": "Visual Studio 18 2026"
     },
     {
+      "name": "vs-github",
+      "hidden": true,
+      "generator": "Visual Studio 17 2022",
+      "toolset": "v143"
+    },
+    {
       "name": "release",
       "hidden": true,
       "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "FULL_RELEASE": true
+      }
+    },
+    {
+      "name": "github",
+      "hidden": true,
+      "binaryDir": "${sourceDir}/build-github",
       "cacheVariables": {
         "FULL_RELEASE": true
       }
@@ -65,6 +79,19 @@
         "windows",
         "vs",
         "release"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "vs-windows-vcpkg-github",
+      "inherits": [
+        "cmake-dev",
+        "vcpkg",
+        "windows",
+        "vs-github",
+        "github"
       ],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
@@ -98,15 +125,20 @@
     }
   ],
     "buildPresets": [
-        {
-            "name": "Release",
-            "configurePreset": "vs-windows-vcpkg-release",
-            "configuration": "Release"
-        },
-        {
-            "name": "Test",
-            "configurePreset": "vs-windows-vcpkg-test",
-            "configuration": "Debug"
-        }
+      {
+        "name": "Release-Github",
+        "configurePreset": "vs-windows-vcpkg-github",
+        "configuration": "Release"
+      },
+      {
+        "name": "Release",
+        "configurePreset": "vs-windows-vcpkg-release",
+        "configuration": "Release"
+      },
+      {
+          "name": "Test",
+          "configurePreset": "vs-windows-vcpkg-test",
+          "configuration": "Debug"
+      }
     ]
 }

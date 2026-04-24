@@ -51,7 +51,7 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Query(const SKSE::QueryInterface* a
 
 	const auto ver = a_skse->RuntimeVersion();
 #ifdef SKYRIM_AE
-	if (ver < SKSE::RUNTIME_1_6_1130) {
+	if (ver < SKSE::RUNTIME_SSE_1_6_1130) {
 #else
 	if (ver < SKSE::RUNTIME_1_5_39) {
 #endif
@@ -77,7 +77,7 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface * a_
 
 #ifdef SKYRIM_AE
 	const auto ver = a_skse->RuntimeVersion();
-	if (ver < SKSE::RUNTIME_1_6_1130) {
+	if (ver < SKSE::RUNTIME_SSE_1_6_1130) {
 		return false;
 	}
 #endif

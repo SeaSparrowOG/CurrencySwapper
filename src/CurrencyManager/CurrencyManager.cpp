@@ -507,7 +507,7 @@ namespace CurrencyManager
 	bool CurrencyManager::SendNotEnoughGoldWarning() {
 		if (customCurrency) {
 			customPurchaseFail.QueueEvent(customCurrency);
-			RE::DebugNotification(fmt::format("You don't have enough {}", customCurrency->GetName()).c_str());
+			RE::SendHUDMessage::ShowHUDMessage(fmt::format("You don't have enough {}", customCurrency->GetName()).c_str());
 			LOG_DEBUG("  >deal was rejected, returning: {}"sv, fmt::format("You don't have enough {}", customCurrency->GetName()));
 			return true;
 		}
@@ -532,7 +532,7 @@ namespace CurrencyManager
 		if (!menu) return;
 
 		RE::GFxValue var;
-		bool useSkyUIPaths = dh->LookupLoadedModByName("SkyUI_SE.esp"sv);
+		static bool useSkyUIPaths = dh->LookupModByName("SkyUI_SE.esp"sv) != nullptr;
 		if (useSkyUIPaths) {
 			menu->GetVariable(&var, pathToVendorLabel_SkyUI);
 		}
@@ -606,54 +606,61 @@ namespace CurrencyManager
 		}
 
 		std::string currencyName = customCurrency->GetName();
-		bool useSkyUIPaths = dh->LookupLoadedModByName("SkyUI_SE.esp"sv);
-		RE::GFxValue var;
+		static bool useSkyUIPaths = dh->LookupModByName("SkyUI_SE.esp"sv) != nullptr;
+		RE::GFxValue vendorGoldValue;
+		RE::GFxValue playerGoldValue;
 
 		if (!playerLabelOverride.empty() && !vendorLabelOverride.empty()) {
-			menu->GetVariable(&var, playerLabelOverride.c_str());
-			if (var.IsUndefined()) {
+			menu->GetVariable(&vendorGoldValue, vendorLabelOverride.c_str());
+			if (vendorGoldValue.IsUndefined()) {
 				return Control::kContinue;
 			}
-			var.SetText(currencyName.c_str());
-
-			menu->GetVariable(&var, vendorLabelOverride.c_str());
-			if (var.IsUndefined()) {
+			menu->GetVariable(&playerGoldValue, playerLabelOverride.c_str());
+			if (playerGoldValue.IsUndefined()) {
 				return Control::kContinue;
 			}
 		}
 		else if (useSkyUIPaths) {
-			menu->GetVariable(&var, pathToPlayerLabel_SkyUI);
-			if (var.IsUndefined()) {
+			menu->GetVariable(&vendorGoldValue, pathToVendorLabel_SkyUI);
+			if (vendorGoldValue.IsUndefined()) {
 				return Control::kContinue;
 			}
-			var.SetText(currencyName.c_str());
-
-			menu->GetVariable(&var, pathToVendorLabel_SkyUI);
-			if (var.IsUndefined()) {
+			menu->GetVariable(&playerGoldValue, pathToPlayerLabel_SkyUI);
+			if (playerGoldValue.IsUndefined()) {
 				return Control::kContinue;
 			}
 		}
 		else {
-			menu->GetVariable(&var, pathToPlayerLabel);
-			if (var.IsUndefined()) {
+			menu->GetVariable(&vendorGoldValue, pathToVendorLabel);
+			if (vendorGoldValue.IsUndefined()) {
 				return Control::kContinue;
 			}
-			var.SetText(currencyName.c_str());
-
-			menu->GetVariable(&var, pathToVendorLabel);
-			if (var.IsUndefined()) {
+			menu->GetVariable(&playerGoldValue, pathToPlayerLabel);
+			if (playerGoldValue.IsUndefined()) {
 				return Control::kContinue;
 			}
+		}
+		if (!playerGoldValue.SetText(currencyName.c_str())) {
+			LOG_DEBUG("  >Failed to update player label text."sv);
+		}
+		else {
+			LOG_DEBUG("  >Updated player label text to: {}"sv, currencyName);
 		}
 
 		auto* dialogueTargetRef = RE::TESForm::LookupByID<RE::Actor>(barterActorID);
+		bool updatedVendor = false;
 		if (dialogueTargetRef && dialogueTargetRef->Is3DLoaded()) {
-			currencyName = fmt::format("{} {}", dialogueTargetRef->GetName(), currencyName);
+			updatedVendor = vendorGoldValue.SetText(fmt::format("{} {}", dialogueTargetRef->GetName(), currencyName).c_str());
 		}
 		else {
-			currencyName = fmt::format("Vendor {}", currencyName);
+			updatedVendor = vendorGoldValue.SetText(fmt::format("Vendor {}", currencyName).c_str());
 		}
-		var.SetText(currencyName.c_str());
+		if (!updatedVendor) {
+			LOG_DEBUG("  >Failed to update vendor label text."sv);
+		}
+		else {
+			LOG_DEBUG("  >Updated vendor label text to: {}"sv, dialogueTargetRef && dialogueTargetRef->Is3DLoaded() ? fmt::format("{} {}", dialogueTargetRef->GetName(), currencyName) : fmt::format("Vendor {}", currencyName));
+		}
 
 		auto trainingMenu = ui->GetMenu<RE::BarterMenu>();
 		if (!trainingMenu) {

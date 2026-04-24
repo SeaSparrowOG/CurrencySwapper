@@ -52,7 +52,7 @@
     {
       "name": "github",
       "hidden": true,
-      "binaryDir": "${sourceDir}/build-github",
+      "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
         "FULL_RELEASE": true,
         "GITHUB":  true

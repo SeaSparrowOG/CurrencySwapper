@@ -52,7 +52,7 @@ namespace Hooks::Training
 	{
 		auto* currency = CurrencyManager::GetCurrency();
 		if (currency) {
-			RE::DebugNotification(
+			RE::SendHUDMessage::ShowHUDMessage(
 				fmt::format("You don't have enough {}", currency->GetName()).c_str(),
 				a_sound,
 				a_cancelIfQueued);

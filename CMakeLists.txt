@@ -6,7 +6,7 @@ option(OUTDATED "Applies 1.5.97 offsets/IDs." OFF)
 # -------- Project ----------
 project(
 	CurrencySwapper
-	VERSION 2.0.1
+	VERSION 2.0.2
 	LANGUAGES CXX
 )
 

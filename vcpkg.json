@@ -1,6 +1,6 @@
 {
   "name": "currency-swapper",
-  "version-string": "2.1.0",
+  "version-string": "2.1.1",
   "description": "Allows for the manipulation of the game's default currency through scripts.",
   "homepage": "https://github.com/SeaSparrowOG/CurrencySwapper",
   "license": "MIT",

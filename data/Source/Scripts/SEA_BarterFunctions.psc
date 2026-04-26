@@ -11,6 +11,12 @@ Function SetTrainingOverridesConsole(String a_sOverrideMultiplier, String a_sMul
 
 Function ReloadINISettings() Global Native
 
+;Displays a vanilla training menu.
+;All credits to Parapets (Exit-9B)
+;  -Nexus: https://www.nexusmods.com/profile/Parapets
+;  -Github: https://github.com/Exit-9B
+Function ShowTutorialMessage(Message akMessage) Global Native
+
 ;/
 Events
 /;

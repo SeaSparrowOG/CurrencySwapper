@@ -2,9 +2,9 @@ name: Build
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "main" ]
   workflow_dispatch:
 
 env:
@@ -42,7 +42,7 @@ jobs:
     - name: Configure CMake
       if: contains(github.event.head_commit.message, 'build_artifact')
       run: |
-        cmake --preset vs-windows-vcpkg-github -Wno-deprecated
+        cmake --preset vs2022-windows-vcpkg-release -Wno-deprecated
 
     - name: Build
       if: contains(github.event.head_commit.message, 'build_artifact')

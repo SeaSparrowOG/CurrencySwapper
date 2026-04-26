@@ -63,6 +63,14 @@ namespace Papyrus {
 		CurrencyManager::ReloadIniSettings();
 	}
 
+	void ShowTutorialMessage(STATIC_ARGS, RE::BGSMessage* a_msg) {
+		if (!a_msg) {
+			a_vm->TraceStack("Cannot call ShowTutorialMessage with a NONE akMessage.", a_stackID, RE::BSScript::IVirtualMachine::Severity::kWarning);
+			return;
+		}
+		RE::TutorialMenu::OpenMenu(a_msg);
+	}
+
 	bool Bind(VM& a_vm)
 	{
 		BIND(ResetCurrency);
@@ -73,6 +81,7 @@ namespace Papyrus {
 		BIND(SetTrainingOverrides);
 		BIND(SetTrainingOverridesConsole);
 		BIND(ReloadINISettings);
+		BIND(ShowTutorialMessage);
 		return true;
 	}
 

@@ -71,6 +71,20 @@ namespace Papyrus {
 		RE::TutorialMenu::OpenMenu(a_msg);
 	}
 
+	bool SuppressGoldNotifications(STATIC_ARGS, bool a_bSuppress) {
+		auto* manager = CurrencyManager::CurrencyManager::GetSingleton();
+		if (!manager) {
+			a_vm->TraceStack("[IsSuppressingGoldNotifications]: Internal Error, failed to fetch Currency Manager.", a_stackID, RE::BSScript::IVirtualMachine::Severity::kError);
+			return false;
+		}
+		manager->SetSuppressNotifications(a_bSuppress);
+		return true;
+	}
+
+	bool IsSuppressingGoldNotifications(STATIC_ARGS) {
+		return CurrencyManager::SupressingGoldNotifications();
+	}
+
 	bool Bind(VM& a_vm)
 	{
 		BIND(ResetCurrency);
@@ -82,6 +96,8 @@ namespace Papyrus {
 		BIND(SetTrainingOverridesConsole);
 		BIND(ReloadINISettings);
 		BIND(ShowTutorialMessage);
+		BIND(IsSuppressingGoldNotifications);
+		BIND(SuppressGoldNotifications);
 		return true;
 	}
 

@@ -37,6 +37,8 @@ namespace CurrencyManager
 
 	void ReloadIniSettings();
 
+	bool SupressingGoldNotifications();
+
 	class CurrencyManager : 
 		public REX::Singleton<CurrencyManager>,
 		public RE::BSTEventSink<RE::MenuOpenCloseEvent>
@@ -54,6 +56,9 @@ namespace CurrencyManager
 		void         RegisterFormForAllEvents(RE::TESForm* a_form);
 		void         UnRegisterFormForAllEvents(RE::TESForm* a_form);
 		RE::TESForm* GetCurrency();
+
+		bool IsSupressingGoldNotifications() const { return _suppressingGoldNotifications; }
+		void SetSuppressNotifications(bool a_supress) { _suppressingGoldNotifications = a_supress; }
 
 		// Function replacers
 		void SendCustomTrainingMenuEvent(RE::TrainingMenu* a_this);
@@ -101,13 +106,14 @@ namespace CurrencyManager
 		bool overrideTrainingCostMultiplier{ false };
 		float trainingCostBaseOverride{ 0.0f };
 		bool overrideTrainingCostBase{ false };
+		bool _suppressingGoldNotifications{ false };
 
 		std::string playerLabelOverride{ "" };
 		std::string vendorLabelOverride{ "" };
 
 		float trainingLabelOffsety{ 0.0f };
 
-		inline static constexpr std::uint32_t Version = 2;
+		inline static constexpr std::uint32_t Version = 3;
 		inline static constexpr std::uint32_t ID = 'AMSF';
 		inline static constexpr std::uint32_t StoredCurrency = 'STCU';
 	};

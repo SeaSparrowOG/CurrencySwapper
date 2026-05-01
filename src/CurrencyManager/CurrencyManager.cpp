@@ -141,6 +141,14 @@ namespace CurrencyManager
 		}
 	}
 
+	bool SupressingGoldNotifications() {
+		static auto* manager = CurrencyManager::GetSingleton();
+		if (!manager) {
+			return false;
+		}
+		return manager->IsSupressingGoldNotifications();
+	}
+
 	void RegisterFormForEvents(RE::TESForm* a_form)
 	{
 		auto* manager = CurrencyManager::GetSingleton();
@@ -235,6 +243,10 @@ namespace CurrencyManager
 			logger::error("  >Failed to write trainingCostMultiplierOverride."sv);
 			return false;
 		}
+		if (!a_intfc->WriteRecordData(_suppressingGoldNotifications)) {
+			logger::error("  >Failed to read _suppressingGoldNotifications."sv);
+			return false;
+		}
 		return true;
 	}
 
@@ -289,6 +301,45 @@ namespace CurrencyManager
 				}
 				if (!a_intfc->ReadRecordData(trainingCostMultiplierOverride)) {
 					logger::error("  >Failed to read trainingCostMultiplierOverride."sv);
+					return false;
+				}
+			}
+			else if (version == 3) {
+				RE::FormID oldID;
+				if (!a_intfc->ReadRecordData(oldID)) {
+					logger::error("  >Failed to read FormID"sv);
+					return false;
+				}
+				RE::FormID newID;
+				if (!a_intfc->ResolveFormID(oldID, newID)) {
+					logger::error("  >Failed to resolve FormID ({:08X})"sv, oldID);
+					return false;
+				}
+				if (newID > 0) {
+					customCurrency = RE::TESForm::LookupByID<RE::TESBoundObject>(newID);
+				}
+				else {
+					customCurrency = nullptr;
+				}
+
+				if (!a_intfc->ReadRecordData(overrideTrainingCostBase)) {
+					logger::error("  >Failed to read overrideTrainingCostBase."sv);
+					return false;
+				}
+				if (!a_intfc->ReadRecordData(trainingCostBaseOverride)) {
+					logger::error("  >Failed to read trainingCostBaseOverride."sv);
+					return false;
+				}
+				if (!a_intfc->ReadRecordData(overrideTrainingCostMultiplier)) {
+					logger::error("  >Failed to read overrideTrainingCostMultiplier."sv);
+					return false;
+				}
+				if (!a_intfc->ReadRecordData(trainingCostMultiplierOverride)) {
+					logger::error("  >Failed to read trainingCostMultiplierOverride."sv);
+					return false;
+				}
+				if (!a_intfc->ReadRecordData(_suppressingGoldNotifications)) {
+					logger::error("  >Failed to read _suppressingGoldNotifications."sv);
 					return false;
 				}
 			}

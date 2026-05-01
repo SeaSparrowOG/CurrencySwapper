@@ -17,6 +17,11 @@ Function ReloadINISettings() Global Native
 ;  -Github: https://github.com/Exit-9B
 Function ShowTutorialMessage(Message akMessage) Global Native
 
+
+bool Function SuppressGoldNotifications(bool a_bSuppress) Global Native
+
+bool Function IsSuppressingGoldNotifications() Global Native
+
 ;/
 Events
 /;

@@ -31,9 +31,14 @@
       }
     },
     {
-      "name": "vs2022",
+      "name": "vs",
       "hidden": true,
       "generator": "Visual Studio 18 2026"
+    },
+    {
+      "name": "vs2022",
+      "hidden": true,
+      "generator": "Visual Studio 17 2022"
     },
     {
       "name": "release",
@@ -49,6 +54,19 @@
       "binaryDir": "${sourceDir}/build-test"
     },
     {
+      "name": "vs-windows-vcpkg-release",
+      "inherits": [
+        "cmake-dev",
+        "vcpkg",
+        "windows",
+        "vs",
+        "release"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
       "name": "vs2022-windows-vcpkg-release",
       "inherits": [
         "cmake-dev",
@@ -58,16 +76,16 @@
         "release"
       ],
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
       }
     },
     {
-      "name": "vs2022-windows-vcpkg-test",
+      "name": "vs-windows-vcpkg-test",
       "inherits": [
         "cmake-dev",
         "vcpkg",
         "windows",
-        "vs2022",
+        "vs",
         "test"
       ],
       "cacheVariables": {
@@ -78,13 +96,18 @@
   "buildPresets": [
     {
       "name": "Release",
-      "configurePreset": "vs2022-windows-vcpkg-release",
+      "configurePreset": "vs-windows-vcpkg-release",
       "configuration": "Release"
     },
     {
       "name": "Test",
-      "configurePreset": "vs2022-windows-vcpkg-test",
+      "configurePreset": "vs-windows-vcpkg-test",
       "configuration": "Debug"
+    },
+    {
+      "name": "Github",
+      "configurePreset": "vs2022-windows-vcpkg-release",
+      "configuration": "RelWithDebInfo"
     }
   ]
 }

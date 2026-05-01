@@ -7,6 +7,10 @@ subs:
     alias: ris
     func: ReloadINISettings
     help: Reloads all ini settings in memory.
+  - name: issuppressinggoldnotifications
+    alias: sgn
+    func: IsSuppressingGoldNotifications
+    help: Returns true if gold notifications are currently being suppressed.
   - name: revertcurrency
     alias: rc
     func: ResetCurrency
@@ -20,6 +24,15 @@ subs:
         type: string
         required: true
         help: The EditorID of the currency to swap to.
+  - name: setsuppress
+    alias: ss
+    func: SuppressGoldNotifications
+    help: Toggles the suppress feature on or off.
+    args:
+      - name: setting
+        type: bool
+        required: true
+        help: True or False.
   - name: settrainingoverrides
     alias: sto
     func: SetTrainingOverridesConsole

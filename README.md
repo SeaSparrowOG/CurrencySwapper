@@ -7,10 +7,10 @@
 ---
 ### Instructions:
 ```
-git clone https://github.com/SeaSparrowOG/SKSE-Plugin-Template
-cd SKSE-Plugin-Template
+git clone https://github.com/SeaSparrowOG/CurrencySwapper
+cd CurrencySwapper
 git submodule update --init --recursive
-cmake --preset vs2022-windows-vcpkg-release
+cmake --preset vs-windows-vcpkg-release
 cmake --build --preset Release
 ```
 ---

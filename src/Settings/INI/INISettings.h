@@ -8,7 +8,7 @@ namespace Settings
 		void Reload();
 
 		class Holder :
-			public REX::Singleton<Holder>
+			public REX::TSingleton<Holder>
 		{
 		public:
 			bool Read();

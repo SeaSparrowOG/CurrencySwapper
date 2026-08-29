@@ -3,10 +3,11 @@
   "version-string": "2.2.0",
   "description": "Allows for the manipulation of the game's default currency through scripts.",
   "homepage": "https://github.com/SeaSparrowOG/CurrencySwapper",
-  "license": "MIT",
+  "license": "GPL-3.0-or-later",
   "dependencies": [
     "boost-stl-interfaces",
     "clib-util",
+    "commonlib-shared",
     "fmt",
     "jsoncpp",
     "rsm-binary-io",

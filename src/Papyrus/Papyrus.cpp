@@ -55,7 +55,7 @@ namespace Papyrus {
 			CurrencyManager::SetTrainingOverrides(overrideMult, multiplier, overrideBase, baseOverride);
 		}
 		catch (const std::exception&) {
-			logger::warn("Caught exception when converting strings to floats in SetTrainingOverridesConsole");
+			logger::WARN("Caught exception when converting strings to floats in SetTrainingOverridesConsole");
 		}
 	}
 

@@ -13,12 +13,12 @@
 #define DLLEXPORT __declspec(dllexport)
 
 #ifndef NDEBUG
-#define LOG_DEBUG(msg, ...) logger::debug(msg, ##__VA_ARGS__)
+#define LOG_DEBUG(msg, ...) logger::DEBUG(msg, ##__VA_ARGS__)
 #else
 #define LOG_DEBUG(msg, ...)
 #endif
 
-namespace logger = SKSE::log;
+namespace logger = REX;
 
 using namespace std::literals;
 namespace util
@@ -62,8 +62,6 @@ namespace util
         }
     };
 
-    using SKSE::stl::report_and_fail;
-
     template <class T>
     using istring_map = std::map<std::string, T, iless>;
 }
@@ -86,7 +84,7 @@ namespace stl {
 template <class T>
 inline constexpr bool always_false = false;
 
-#define SECTION_SEPARATOR logger::info("=========================================================="sv)
+#define SECTION_SEPARATOR logger::INFO("=========================================================="sv)
 
 #ifdef SKYRIM_AE
 #	define OFFSET(se, ae) ae

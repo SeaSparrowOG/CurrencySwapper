@@ -9,13 +9,13 @@ namespace Hooks::Notifications
 	}
 
 	bool NotificationPatch::Install() {
-		logger::info("  >Installing the Notification hook..."sv);
+		logger::INFO("  >Installing the Notification hook..."sv);
 		REL::Relocation<std::uintptr_t> target{ REL::ID(16127), 0x182 };
-		if (!REL::make_pattern<"E8">().match(target.address())) {
-			logger::critical("    >Failed to validate the hook pattern."sv);
+		if (!REL::Pattern<"E8">().match(target.address())) {
+			logger::CRITICAL("    >Failed to validate the hook pattern."sv);
 			return false;
 		}
-		auto& trampoline = SKSE::GetTrampoline();
+		auto& trampoline = REL::GetTrampoline();
 		_itemAddedNotification = trampoline.write_call<5>(target.address(), &ItemAddedNotification);
 		return true;
 	}

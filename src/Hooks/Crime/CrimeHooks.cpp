@@ -4,13 +4,13 @@
 
 namespace Hooks::Crime {
 	bool RemovePlayerCrimeGoldHook::InstallCrimeHook() {
-		logger::info("  >Installing the PayCrime hook..."sv);
+		logger::INFO("  >Installing the PayCrime hook..."sv);
 		REL::Relocation<std::uintptr_t> target{ REL::ID(40659), 0x12B };
-		if (!REL::make_pattern<"E8">().match(target.address())) {
-			logger::critical("    >Failed to validate the hook pattern."sv);
+		if (!REL::Pattern<"E8">().match(target.address())) {
+			logger::CRITICAL("    >Failed to validate the hook pattern."sv);
 			return false;
 		}
-		auto& trampoline = SKSE::GetTrampoline();
+		auto& trampoline = REL::GetTrampoline();
 		_removeBountyCurrency = trampoline.write_call<5>(target.address(), &RemoveBountyCurrency);
 		return true;
 	}
@@ -26,13 +26,13 @@ namespace Hooks::Crime {
 	}
 
 	bool CanPayCrimeGoldHook::InstallCanPayCrimeGoldHook() {
-		logger::info("  >Installing the CanPayBounty hook..."sv);
+		logger::INFO("  >Installing the CanPayBounty hook..."sv);
 		REL::Relocation<std::uintptr_t> target{ REL::ID(21704), 0x3C };
-		if (!REL::make_pattern<"E8">().match(target.address())) {
-			logger::critical("    >Failed to validate the hook pattern."sv);
+		if (!REL::Pattern<"E8">().match(target.address())) {
+			logger::CRITICAL("    >Failed to validate the hook pattern."sv);
 			return false;
 		}
-		auto& trampoline = SKSE::GetTrampoline();
+		auto& trampoline = REL::GetTrampoline();
 		_getGoldAmount = trampoline.write_call<5>(target.address(), &GetGoldAmount);
 		return true;
 	}

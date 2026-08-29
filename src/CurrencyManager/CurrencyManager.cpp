@@ -177,11 +177,11 @@ namespace CurrencyManager
 {
 	bool Initialize() {
 		SECTION_SEPARATOR;
-		logger::info("Initializing Currency Manager..."sv);
+		logger::INFO("Initializing Currency Manager..."sv);
 
 		auto* manager = CurrencyManager::GetSingleton();
 		if (!manager) {
-			logger::critical("  >Failed to retrieve internal manager."sv);
+			logger::CRITICAL("  >Failed to retrieve internal manager."sv);
 			return false;
 		}
 		return manager->Initialize();
@@ -190,7 +190,7 @@ namespace CurrencyManager
 	bool Save(SKSE::SerializationInterface* a_intfc) {
 		auto* manager = CurrencyManager::GetSingleton();
 		if (!manager) {
-			logger::error("Save: Failed to retrieve internal Currency Manager."sv);
+			logger::ERROR("Save: Failed to retrieve internal Currency Manager."sv);
 			return false;
 		}
 		return manager->Save(a_intfc);
@@ -199,7 +199,7 @@ namespace CurrencyManager
 	bool Load(SKSE::SerializationInterface* a_intfc) {
 		auto* manager = CurrencyManager::GetSingleton();
 		if (!manager) {
-			logger::error("Load: Failed to retrieve internal Currency Manager."sv);
+			logger::ERROR("Load: Failed to retrieve internal Currency Manager."sv);
 			return false;
 		}
 		return manager->Load(a_intfc);
@@ -208,43 +208,43 @@ namespace CurrencyManager
 	void Revert(SKSE::SerializationInterface* a_intfc) {
 		auto* manager = CurrencyManager::GetSingleton();
 		if (!manager) {
-			logger::error("Revert: Failed to retrieve internal Currency Manager."sv);
+			logger::ERROR("Revert: Failed to retrieve internal Currency Manager."sv);
 			return;
 		}
 		manager->Revert(a_intfc);
 	}
 
 	bool CurrencyManager::Save(SKSE::SerializationInterface* a_intfc) {
-		logger::info("Saving currency data..."sv);
+		logger::INFO("Saving currency data..."sv);
 		if (!a_intfc->OpenRecord(StoredCurrency, Version)) {
-			logger::error("  >Failed to open record for currency data."sv);
+			logger::ERROR("  >Failed to open record for currency data."sv);
 			return false;
 		}
 
 		RE::FormID currencyID = customCurrency ? customCurrency->GetFormID() : 0;
 		if (!a_intfc->WriteRecordData(currencyID)) {
-			logger::error("  >Failed to write currency ID: {}"sv, currencyID);
+			logger::ERROR("  >Failed to write currency ID: {}"sv, currencyID);
 			return false;
 		}
 
 		if (!a_intfc->WriteRecordData(overrideTrainingCostBase)) {
-			logger::error("  >Failed to write overrideTrainingCostBase."sv);
+			logger::ERROR("  >Failed to write overrideTrainingCostBase."sv);
 			return false;
 		}
 		if (!a_intfc->WriteRecordData(trainingCostBaseOverride)) {
-			logger::error("  >Failed to write trainingCostBaseOverride."sv);
+			logger::ERROR("  >Failed to write trainingCostBaseOverride."sv);
 			return false;
 		}
 		if (!a_intfc->WriteRecordData(overrideTrainingCostMultiplier)) {
-			logger::error("  >Failed to write overrideTrainingCostMultiplier."sv);
+			logger::ERROR("  >Failed to write overrideTrainingCostMultiplier."sv);
 			return false;
 		}
 		if (!a_intfc->WriteRecordData(trainingCostMultiplierOverride)) {
-			logger::error("  >Failed to write trainingCostMultiplierOverride."sv);
+			logger::ERROR("  >Failed to write trainingCostMultiplierOverride."sv);
 			return false;
 		}
 		if (!a_intfc->WriteRecordData(_suppressingGoldNotifications)) {
-			logger::error("  >Failed to read _suppressingGoldNotifications."sv);
+			logger::ERROR("  >Failed to read _suppressingGoldNotifications."sv);
 			return false;
 		}
 		return true;
@@ -259,17 +259,17 @@ namespace CurrencyManager
 				continue;
 			}
 
-			logger::info("Loading currency data..."sv);
+			logger::INFO("Loading currency data..."sv);
 			if (version == 1) {
-				logger::info("  >Legacy 1"sv);
+				logger::INFO("  >Legacy 1"sv);
 				RE::FormID oldID;
 				if (!a_intfc->ReadRecordData(oldID)) {
-					logger::error("  >Failed to read FormID"sv);
+					logger::ERROR("  >Failed to read FormID"sv);
 					return false;
 				}
 				RE::FormID newID;
 				if (!a_intfc->ResolveFormID(oldID, newID)) {
-					logger::error("  >Failed to resolve FormID ({:08X})"sv, oldID);
+					logger::ERROR("  >Failed to resolve FormID ({:08X})"sv, oldID);
 					return false;
 				}
 				customCurrency = RE::TESForm::LookupByID<RE::TESBoundObject>(newID);
@@ -277,42 +277,42 @@ namespace CurrencyManager
 			else if (version == 2) {
 				RE::FormID oldID;
 				if (!a_intfc->ReadRecordData(oldID)) {
-					logger::error("  >Failed to read FormID"sv);
+					logger::ERROR("  >Failed to read FormID"sv);
 					return false;
 				}
 				RE::FormID newID;
 				if (!a_intfc->ResolveFormID(oldID, newID)) {
-					logger::error("  >Failed to resolve FormID ({:08X})"sv, oldID);
+					logger::ERROR("  >Failed to resolve FormID ({:08X})"sv, oldID);
 					return false;
 				}
 				customCurrency = RE::TESForm::LookupByID<RE::TESBoundObject>(newID);
 
 				if (!a_intfc->ReadRecordData(overrideTrainingCostBase)) {
-					logger::error("  >Failed to read overrideTrainingCostBase."sv);
+					logger::ERROR("  >Failed to read overrideTrainingCostBase."sv);
 					return false;
 				}
 				if (!a_intfc->ReadRecordData(trainingCostBaseOverride)) {
-					logger::error("  >Failed to read trainingCostBaseOverride."sv);
+					logger::ERROR("  >Failed to read trainingCostBaseOverride."sv);
 					return false;
 				}
 				if (!a_intfc->ReadRecordData(overrideTrainingCostMultiplier)) {
-					logger::error("  >Failed to read overrideTrainingCostMultiplier."sv);
+					logger::ERROR("  >Failed to read overrideTrainingCostMultiplier."sv);
 					return false;
 				}
 				if (!a_intfc->ReadRecordData(trainingCostMultiplierOverride)) {
-					logger::error("  >Failed to read trainingCostMultiplierOverride."sv);
+					logger::ERROR("  >Failed to read trainingCostMultiplierOverride."sv);
 					return false;
 				}
 			}
 			else if (version == 3) {
 				RE::FormID oldID;
 				if (!a_intfc->ReadRecordData(oldID)) {
-					logger::error("  >Failed to read FormID"sv);
+					logger::ERROR("  >Failed to read FormID"sv);
 					return false;
 				}
 				RE::FormID newID;
 				if (!a_intfc->ResolveFormID(oldID, newID)) {
-					logger::error("  >Failed to resolve FormID ({:08X})"sv, oldID);
+					logger::ERROR("  >Failed to resolve FormID ({:08X})"sv, oldID);
 					return false;
 				}
 				if (newID > 0) {
@@ -323,28 +323,28 @@ namespace CurrencyManager
 				}
 
 				if (!a_intfc->ReadRecordData(overrideTrainingCostBase)) {
-					logger::error("  >Failed to read overrideTrainingCostBase."sv);
+					logger::ERROR("  >Failed to read overrideTrainingCostBase."sv);
 					return false;
 				}
 				if (!a_intfc->ReadRecordData(trainingCostBaseOverride)) {
-					logger::error("  >Failed to read trainingCostBaseOverride."sv);
+					logger::ERROR("  >Failed to read trainingCostBaseOverride."sv);
 					return false;
 				}
 				if (!a_intfc->ReadRecordData(overrideTrainingCostMultiplier)) {
-					logger::error("  >Failed to read overrideTrainingCostMultiplier."sv);
+					logger::ERROR("  >Failed to read overrideTrainingCostMultiplier."sv);
 					return false;
 				}
 				if (!a_intfc->ReadRecordData(trainingCostMultiplierOverride)) {
-					logger::error("  >Failed to read trainingCostMultiplierOverride."sv);
+					logger::ERROR("  >Failed to read trainingCostMultiplierOverride."sv);
 					return false;
 				}
 				if (!a_intfc->ReadRecordData(_suppressingGoldNotifications)) {
-					logger::error("  >Failed to read _suppressingGoldNotifications."sv);
+					logger::ERROR("  >Failed to read _suppressingGoldNotifications."sv);
 					return false;
 				}
 			}
 			else {
-				logger::error("Unsupported version {} for type {}"sv, version, type);
+				logger::ERROR("Unsupported version {} for type {}"sv, version, type);
 				return false;
 			}
 			return true;
@@ -365,20 +365,20 @@ namespace CurrencyManager
 	bool CurrencyManager::Initialize() {
 		auto* sourceEventHolder = RE::UI::GetSingleton();
 		if (!sourceEventHolder) {
-			logger::critical("  >Failed to get the game's source event holder."sv);
+			logger::CRITICAL("  >Failed to get the game's source event holder."sv);
 			return false;
 		}
 
 		auto* settingsHolder = Settings::INI::Holder::GetSingleton();
 		if (!settingsHolder) {
-			logger::critical("  >Failed to get the settings holder."sv);
+			logger::CRITICAL("  >Failed to get the settings holder."sv);
 			return false;
 		}
 
 		auto yLabelOffsetRaw = settingsHolder->GetStoredSetting<float>(Settings::INI::TRAINING_MENU_LABEL_OFFSET_Y);
 		trainingLabelOffsety = yLabelOffsetRaw.has_value() ? yLabelOffsetRaw.value() : -18.0f;
 		if (!yLabelOffsetRaw.has_value()) {
-			logger::warn("  >Failed to retrieve training label offset from settings, using default value: {}"sv, trainingLabelOffsety);
+			logger::WARN("  >Failed to retrieve training label offset from settings, using default value: {}"sv, trainingLabelOffsety);
 		}
 
 		auto vendorLabelOverrideRaw = settingsHolder->GetStoredSetting<std::string>(Settings::INI::BARTER_MENU_VENDOR_LABEL_OVERWRITE);
@@ -391,9 +391,9 @@ namespace CurrencyManager
 			vendorLabelOverride = "";
 		}
 		else {
-			logger::info("  >Overrode default paths with:"sv);
-			logger::info("    Player Label: {}"sv, playerLabelOverride);
-			logger::info("    Vendor Label: {}"sv, vendorLabelOverride);
+			logger::INFO("  >Overrode default paths with:"sv);
+			logger::INFO("    Player Label: {}"sv, playerLabelOverride);
+			logger::INFO("    Vendor Label: {}"sv, vendorLabelOverride);
 		}
 		sourceEventHolder->AddEventSink(this);
 		return true;
@@ -413,7 +413,7 @@ namespace CurrencyManager
 	bool CurrencyManager::SetCurrency(RE::TESForm* a_newCurrency) {
 		auto* bound = a_newCurrency ? skyrim_cast<RE::TESBoundObject*>(a_newCurrency) : nullptr;
 		if (!bound) {
-			logger::warn("Failed to set new currency. Provided form: {}"sv, a_newCurrency ? a_newCurrency->GetName() : "NULL");
+			logger::WARN("Failed to set new currency. Provided form: {}"sv, a_newCurrency ? a_newCurrency->GetName() : "NULL");
 			return false;
 		}
 
@@ -1051,17 +1051,17 @@ namespace CurrencyManager
 	void CurrencyManager::ReloadINISettings() {
 		auto* settingsHolder = Settings::INI::Holder::GetSingleton();
 		if (!settingsHolder) {
-			logger::warn("  >Failed to retrieve settings holder for INI reload."sv);
+			logger::WARN("  >Failed to retrieve settings holder for INI reload."sv);
 			return;
 		}
 		settingsHolder->Reload();
 		auto yLabelOffsetRaw = settingsHolder->GetStoredSetting<float>(Settings::INI::TRAINING_MENU_LABEL_OFFSET_Y);
 		if (yLabelOffsetRaw.has_value()) {
 			trainingLabelOffsety = yLabelOffsetRaw.value();
-			logger::info("  >Training label offset updated to: {}"sv, trainingLabelOffsety);
+			logger::INFO("  >Training label offset updated to: {}"sv, trainingLabelOffsety);
 		}
 		else {
-			logger::warn("  >Failed to retrieve training label offset from settings, using default value: {}"sv, trainingLabelOffsety);
+			logger::WARN("  >Failed to retrieve training label offset from settings, using default value: {}"sv, trainingLabelOffsety);
 		}
 
 		auto vendorLabelOverrideRaw = settingsHolder->GetStoredSetting<std::string>(Settings::INI::BARTER_MENU_VENDOR_LABEL_OVERWRITE);
@@ -1073,9 +1073,9 @@ namespace CurrencyManager
 			vendorLabelOverride = "";
 		}
 		else {
-			logger::info("  >Overrode default paths with:"sv);
-			logger::info("    Player Label: {}"sv, playerLabelOverride);
-			logger::info("    Vendor Label: {}"sv, vendorLabelOverride);
+			logger::INFO("  >Overrode default paths with:"sv);
+			logger::INFO("    Player Label: {}"sv, playerLabelOverride);
+			logger::INFO("    Vendor Label: {}"sv, vendorLabelOverride);
 		}
 	}
 }

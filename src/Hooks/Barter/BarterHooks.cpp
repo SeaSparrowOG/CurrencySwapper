@@ -127,97 +127,97 @@ namespace Hooks::Barter
 	}
 
 	inline bool GetPlayerGoldHook::Install() {
-		logger::info("  >Installing the Get Player Gold hook..."sv);
+		logger::INFO("  >Installing the Get Player Gold hook..."sv);
 		REL::Relocation<std::uintptr_t> target{ REL::ID(50957), 0x69 };
-		if (!REL::make_pattern<"E8">().match(target.address())) {
-			logger::critical("    >Failed to validate the hook pattern."sv);
+		if (!REL::Pattern<"E8">().match(target.address())) {
+			logger::CRITICAL("    >Failed to validate the hook pattern."sv);
 			return false;
 		}
-		auto& trampoline = SKSE::GetTrampoline();
+		auto& trampoline = REL::GetTrampoline();
 		_getPlayerGold = trampoline.write_call<5>(target.address(), &GetPlayerGold);
 		return true;
 	}
 
 	inline bool GetVendorGoldHook::Install() {
-		logger::info("  >Installing the Get Vendor Gold hook..."sv);
+		logger::INFO("  >Installing the Get Vendor Gold hook..."sv);
 		REL::Relocation<std::uintptr_t> target{ REL::ID(50957), 0x139 };
-		if (!REL::make_pattern<"E8">().match(target.address())) {
-			logger::critical("    >Failed to validate the hook pattern."sv);
+		if (!REL::Pattern<"E8">().match(target.address())) {
+			logger::CRITICAL("    >Failed to validate the hook pattern."sv);
 			return false;
 		}
-		auto& trampoline = SKSE::GetTrampoline();
+		auto& trampoline = REL::GetTrampoline();
 		_getVendorGold = trampoline.write_call<5>(target.address(), &GetVendorGold);
 		return true;
 	}
 
 	inline bool GetGoldFromSaleHook::Install() {
-		logger::info("  >Installing the Get Gold from Sale hook..."sv);
+		logger::INFO("  >Installing the Get Gold from Sale hook..."sv);
 		REL::Relocation<std::uintptr_t> target{ REL::ID(50951), 0x257 };
-		if (!REL::make_pattern<"E8">().match(target.address())) {
-			logger::critical("    >Failed to validate the hook pattern."sv);
+		if (!REL::Pattern<"E8">().match(target.address())) {
+			logger::CRITICAL("    >Failed to validate the hook pattern."sv);
 			return false;
 		}
-		auto& trampoline = SKSE::GetTrampoline();
+		auto& trampoline = REL::GetTrampoline();
 		_getGoldFromSale = trampoline.write_call<5>(target.address(), &GetGoldFromSale);
 		return true;
 	}
 
 	inline bool GetGoldFromPurchaseHook::Install() {
-		logger::info("  >Installing the Get Gold from Purchase hook..."sv);
+		logger::INFO("  >Installing the Get Gold from Purchase hook..."sv);
 		REL::Relocation<std::uintptr_t> target{ REL::ID(50951), 0x121 };
-		if (!REL::make_pattern<"E8">().match(target.address())) {
-			logger::critical("    >Failed to validate the hook pattern."sv);
+		if (!REL::Pattern<"E8">().match(target.address())) {
+			logger::CRITICAL("    >Failed to validate the hook pattern."sv);
 			return false;
 		}
-		auto& trampoline = SKSE::GetTrampoline();
+		auto& trampoline = REL::GetTrampoline();
 		_getGoldFromPurchase = trampoline.write_call<5>(target.address(), &GetGoldFromPurchase);
 		return true;
 	}
 
 	inline bool RawDealHook::Install() {
-		logger::info("  >Installing the Raw Deal hook..."sv);
+		logger::INFO("  >Installing the Raw Deal hook..."sv);
 		REL::Relocation<std::uintptr_t> target{ REL::ID(50952), 0xB1 };
-		if (!REL::make_pattern<"E8">().match(target.address())) {
-			logger::critical("    >Failed to validate the hook pattern."sv);
+		if (!REL::Pattern<"E8">().match(target.address())) {
+			logger::CRITICAL("    >Failed to validate the hook pattern."sv);
 			return false;
 		}
-		auto& trampoline = SKSE::GetTrampoline();
+		auto& trampoline = REL::GetTrampoline();
 		_processRawDeal = trampoline.write_call<5>(target.address(), &ProcessRawDeal);
 		return true;
 	}
 
 	inline bool RejectedDealHook::Install() {
-		logger::info("  >Installing the Rejected Deal hook..."sv);
+		logger::INFO("  >Installing the Rejected Deal hook..."sv);
 		REL::Relocation<std::uintptr_t> target{ REL::ID(50951), 0x1A7 };
-		if (!REL::make_pattern<"E8">().match(target.address())) {
-			logger::critical("    >Failed to validate the hook pattern."sv);
+		if (!REL::Pattern<"E8">().match(target.address())) {
+			logger::CRITICAL("    >Failed to validate the hook pattern."sv);
 			return false;
 		}
-		auto& trampoline = SKSE::GetTrampoline();
+		auto& trampoline = REL::GetTrampoline();
 		_processRejectedDeal = trampoline.write_call<5>(target.address(), &ProcessRejectedDeal);
 		return true;
 	}
 
 	inline bool RecalcVendorGoldHook::Install() {
-		logger::info("  >Installing the Recalc Vendor Gold hook..."sv);
+		logger::INFO("  >Installing the Recalc Vendor Gold hook..."sv);
 		REL::Relocation<std::uintptr_t> target{ REL::ID(50957), 0x2F7 };
-		if (!REL::make_pattern<"E8">().match(target.address())) {
-			logger::critical("    >Failed to validate the hook pattern."sv);
+		if (!REL::Pattern<"E8">().match(target.address())) {
+			logger::CRITICAL("    >Failed to validate the hook pattern."sv);
 			return false;
 		}
-		auto& trampoline = SKSE::GetTrampoline();
+		auto& trampoline = REL::GetTrampoline();
 		_recalcVendorGold = trampoline.write_call<5>(target.address(), &RecalcVendorGold);
 		return true;
 	}
 
 	inline bool ShowBarterMenuHook::Install() {
-		logger::info("  >Installing the Show Barter Menu hook..."sv);
+		logger::INFO("  >Installing the Show Barter Menu hook..."sv);
 		REL::Relocation<std::uintptr_t> target{ REL::ID(50955), 0x21 };
-		if (!REL::make_pattern<"E8">().match(target.address())) {
-			logger::critical("    >Failed to validate the hook pattern."sv);
+		if (!REL::Pattern<"E8">().match(target.address())) {
+			logger::CRITICAL("    >Failed to validate the hook pattern."sv);
 			return false;
 		}
-		auto& trampoline = SKSE::GetTrampoline();
+		auto& trampoline = REL::GetTrampoline();
 		_showBarterMenu = trampoline.write_call<5>(target.address(), &ShowBarterMenu);
 		return true;
 	}

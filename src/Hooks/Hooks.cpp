@@ -8,11 +8,8 @@
 namespace Hooks {
 	bool Install() {
 		SECTION_SEPARATOR;
-		logger::info("Installing hooks..."sv);
-		constexpr size_t allocSize = Barter::allocSize + Crime::allocSize + Notifications::allocSize + Training::allocSize;
-		logger::info("  >Allocated {} bytes."sv, allocSize);
-		SKSE::AllocTrampoline(allocSize);
-
+		logger::INFO("Installing hooks..."sv);
+		
 		bool success = true;
 		success &= Barter::Install();
 		success &= Crime::InstallCrimeHooks();

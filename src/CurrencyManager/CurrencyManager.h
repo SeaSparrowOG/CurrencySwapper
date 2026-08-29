@@ -40,7 +40,7 @@ namespace CurrencyManager
 	bool SupressingGoldNotifications();
 
 	class CurrencyManager : 
-		public REX::Singleton<CurrencyManager>,
+		public REX::TSingleton<CurrencyManager>,
 		public RE::BSTEventSink<RE::MenuOpenCloseEvent>
 	{
 	public:

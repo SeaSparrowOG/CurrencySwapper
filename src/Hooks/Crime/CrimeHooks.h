@@ -24,7 +24,7 @@ namespace Hooks
 			inline static REL::Relocation<decltype(GetGoldAmount)> _getGoldAmount;
 		};
 
-		static bool InstallCrimeHooks()
+		[[nodiscard]] inline bool InstallCrimeHooks()
 		{
 			bool success = true;
 			success &= CanPayCrimeGoldHook::InstallCanPayCrimeGoldHook();

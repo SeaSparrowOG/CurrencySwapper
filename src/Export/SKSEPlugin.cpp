@@ -32,7 +32,7 @@ SKSE_PLUGIN_QUERY(const SKSE::QueryInterface* a_skse, SKSE::PluginInfo* a_info)
 
 SKSE_PLUGIN_LOAD(const SKSE::LoadInterface * a_skse)
 {
-	constexpr size_t allocSize = 7u * 14u + 14u * 1u; + 2u * 14u + 8u * 14u;
+	constexpr size_t allocSize = 7u * 14u + 14u + 2u * 14u + 8u * 14u;
 	SKSE::InitInfo info;
 	info.hook = true;
 	info.log = true;
